@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Securitia — Admin</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"
+    />
+    <style>
+      :root {
+        --bg: #0a0e1a;
+        --panel: #111827;
+        --border: #1f2937;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #6366f1;
+        --accent-hover: #4f46e5;
+        --success: #10b981;
+        --error: #ef4444;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+      header.admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+      header.admin-header h1 {
+        font-size: 24px;
+        margin: 0;
+      }
+      header.admin-header .logo {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+      }
+      .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+      .btn-ghost:hover {
+        color: var(--text);
+        border-color: var(--accent);
+      }
+
+      /* Login */
+      .login-card {
+        max-width: 380px;
+        margin: 120px auto;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 32px;
+      }
+      .login-card h2 {
+        margin: 0 0 8px;
+        font-size: 22px;
+      }
+      .login-card p {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      input[type="password"],
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        background: #0f172a;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+      }
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .login-card button {
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      /* Editor */
+      .section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .section h3 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        color: var(--accent);
+      }
+      .section .section-key {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: "SF Mono", Menlo, monospace;
+        margin-bottom: 18px;
+      }
+      .field {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 16px;
+        align-items: start;
+        padding: 12px 0;
+        border-top: 1px solid var(--border);
+      }
+      .field:first-of-type {
+        border-top: none;
+      }
+      .field label {
+        font-size: 13px;
+        color: var(--muted);
+        font-family: "SF Mono", Menlo, monospace;
+        padding-top: 10px;
+      }
+      .toolbar {
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        padding: 16px 0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        align-items: center;
+        z-index: 10;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+      }
+      .status {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .status--success {
+        color: var(--success);
+      }
+      .status--error {
+        color: var(--error);
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="admin-header">
+        <div class="logo">🛡️ SECURITIA · Admin</div>
+        <button id="logout-btn" class="btn-ghost hidden">Cerrar sesión</button>
+      </header>
+
+      <!-- Login view -->
+      <div id="login-view" class="login-card">
+        <h2>Acceso admin</h2>
+        <p>Introduce la contraseña para gestionar los textos del sitio.</p>
+        <form id="login-form">
+          <input
+            type="password"
+            id="password-input"
+            placeholder="Contraseña"
+            autocomplete="current-password"
+            required
+          />
+          <button type="submit" class="btn-primary">Entrar</button>
+          <p
+            id="login-error"
+            class="status status--error"
+            style="margin: 12px 0 0"
+          ></p>
+        </form>
+      </div>
+
+      <!-- Editor view -->
+      <div id="editor-view" class="hidden">
+        <div class="toolbar">
+          <span id="save-status" class="status"></span>
+          <button id="reload-btn" class="btn-ghost">Recargar</button>
+          <button id="save-btn" class="btn-primary">Guardar cambios</button>
+        </div>
+        <div id="sections"></div>
+      </div>
+    </div>
+
+    <script>
+      const SECTIONS = [
+        { id: "nav", title: "Navegación", prefix: "nav." },
+        { id: "hero", title: "Hero (sección principal)", prefix: "hero." },
+        { id: "how", title: "Cómo funciona", prefix: "how." },
+        { id: "vulns", title: "Vulnerabilidades", prefix: "vulns." },
+        { id: "pricing", title: "Precios", prefix: "pricing." },
+        { id: "results", title: "CTA de resultados", prefix: "results." },
+        { id: "footer", title: "Footer", prefix: "footer." },
+      ];
+
+      const TOKEN_KEY = "securitia_admin_token";
+
+      const loginView = document.getElementById("login-view");
+      const editorView = document.getElementById("editor-view");
+      const loginForm = document.getElementById("login-form");
+      const passwordInput = document.getElementById("password-input");
+      const loginError = document.getElementById("login-error");
+      const logoutBtn = document.getElementById("logout-btn");
+      const saveBtn = document.getElementById("save-btn");
+      const reloadBtn = document.getElementById("reload-btn");
+      const saveStatus = document.getElementById("save-status");
+      const sectionsRoot = document.getElementById("sections");
+
+      function getToken() {
+        return sessionStorage.getItem(TOKEN_KEY);
+      }
+
+      function setToken(token) {
+        if (token) sessionStorage.setItem(TOKEN_KEY, token);
+        else sessionStorage.removeItem(TOKEN_KEY);
+      }
+
+      function showEditor() {
+        loginView.classList.add("hidden");
+        editorView.classList.remove("hidden");
+        logoutBtn.classList.remove("hidden");
+        loadTexts();
+      }
+
+      function showLogin() {
+        loginView.classList.remove("hidden");
+        editorView.classList.add("hidden");
+        logoutBtn.classList.add("hidden");
+        passwordInput.value = "";
+        passwordInput.focus();
+      }
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        loginError.textContent = "";
+        try {
+          const res = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: passwordInput.value }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Error de login");
+          setToken(data.token);
+          showEditor();
+        } catch (err) {
+          loginError.textContent = err.message;
+        }
+      });
+
+      logoutBtn.addEventListener("click", () => {
+        setToken(null);
+        showLogin();
+      });
+
+      async function loadTexts() {
+        saveStatus.textContent = "Cargando…";
+        saveStatus.className = "status";
+        const res = await fetch("/api/texts");
+        const texts = await res.json();
+        renderSections(texts);
+        saveStatus.textContent = "";
+      }
+
+      function renderSections(texts) {
+        sectionsRoot.innerHTML = "";
+        const keys = Object.keys(texts).sort();
+
+        for (const section of SECTIONS) {
+          const sectionKeys = keys.filter((k) => k.startsWith(section.prefix));
+          if (sectionKeys.length === 0) continue;
+
+          const el = document.createElement("div");
+          el.className = "section";
+          el.innerHTML = `
+            <h3>${section.title}</h3>
+            <div class="section-key">${section.prefix}*</div>
+          `;
+
+          for (const key of sectionKeys) {
+            const field = document.createElement("div");
+            field.className = "field";
+            const value = texts[key] || "";
+            const isLong = value.length > 60;
+            const control = isLong
+              ? `<textarea data-key="${key}" rows="3">${escapeHtml(value)}</textarea>`
+              : `<input type="text" data-key="${key}" value="${escapeHtml(value)}" />`;
+            field.innerHTML = `
+              <label>${key}</label>
+              <div>${control}</div>
+            `;
+            el.appendChild(field);
+          }
+
+          sectionsRoot.appendChild(el);
+        }
+      }
+
+      function escapeHtml(s) {
+        return s
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      saveBtn.addEventListener("click", async () => {
+        const updates = {};
+        document.querySelectorAll("[data-key]").forEach((el) => {
+          updates[el.getAttribute("data-key")] = el.value;
+        });
+
+        saveBtn.disabled = true;
+        saveStatus.textContent = "Guardando…";
+        saveStatus.className = "status";
+
+        try {
+          const res = await fetch("/api/admin/texts", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify({ texts: updates }),
+          });
+          const data = await res.json();
+          if (res.status === 401) {
+            setToken(null);
+            showLogin();
+            loginError.textContent = "Sesión expirada, vuelve a entrar.";
+            return;
+          }
+          if (!res.ok) throw new Error(data.error || "Error al guardar");
+          saveStatus.textContent = "✅ Cambios guardados";
+          saveStatus.className = "status status--success";
+        } catch (err) {
+          saveStatus.textContent = `❌ ${err.message}`;
+          saveStatus.className = "status status--error";
+        } finally {
+          saveBtn.disabled = false;
+        }
+      });
+
+      reloadBtn.addEventListener("click", loadTexts);
+
+      // Boot
+      if (getToken()) showEditor();
+      else showLogin();
+    </script>
+  </body>
+</html>

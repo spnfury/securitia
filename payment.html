@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desbloquear Reporte — Securitia</title>
+  <meta name="description" content="Desbloquea tu informe de seguridad completo con todas las verificaciones y recomendaciones detalladas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <style>
+    .payment-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .payment-container {
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .payment-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .payment-header__logo {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    .payment-header__brand {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .payment-header__subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .payment-card {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-card-hover));
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    .payment-card__section {
+      padding: 28px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .payment-card__section:last-child {
+      border-bottom: none;
+    }
+
+    .payment-card__label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .payment-card__url {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      word-break: break-all;
+    }
+
+    .payment-card__score-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .payment-card__score-badge {
+      width: 56px;
+      height: 56px;
+      line-height: 56px;
+      text-align: center;
+      border-radius: 50%;
+      font-size: 28px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+    }
+
+    .payment-card__score-info {
+      flex: 1;
+    }
+
+    .payment-card__score-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .payment-card__score-detail {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .payment-card__features {
+      list-style: none;
+    }
+
+    .payment-card__feature {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .payment-card__price-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .payment-card__price {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+
+    .payment-card__price-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .payment-card__pay-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent-purple), #6d28d9);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-family: var(--font-sans);
+      margin-bottom: 12px;
+    }
+
+    .payment-card__pay-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 24px rgba(139,92,246,0.4);
+    }
+
+    .payment-card__pay-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .payment-card__secure {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    /* Report section (shown after payment) */
+    .report-section {
+      margin-top: 32px;
+    }
+
+    .report-section__title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .loading-state__text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 16px;
+    }
+
+    .error-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--accent-red);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-top: 24px;
+      transition: opacity var(--transition-fast);
+    }
+
+    .back-link:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow--1"></div>
+  <div class="bg-glow bg-glow--2"></div>
+
+  <div class="payment-page">
+    <div class="payment-container">
+      <!-- Header -->
+      <div class="payment-header">
+        <div class="payment-header__logo">🛡️</div>
+        <div class="payment-header__brand">SECURITIA</div>
+        <div class="payment-header__subtitle">Informe de Seguridad Premium</div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="loading-state" class="loading-state">
+        <svg class="spinner" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+          <circle cx="12" cy="12" r="10" stroke-dasharray="40 20"/>
+        </svg>
+        <div class="loading-state__text">Cargando datos del escaneo...</div>
+      </div>
+
+      <!-- Error state -->
+      <div id="error-state" class="error-state" hidden>
+        <p>❌ Token no válido o expirado</p>
+        <a href="/" class="back-link">← Volver a Securitia</a>
+      </div>
+
+      <!-- Payment card -->
+      <div id="payment-card" class="payment-card" hidden>
+        <div class="payment-card__section">
+          <div class="payment-card__label">Sitio analizado</div>
+          <div class="payment-card__url" id="payment-url">-</div>
+        </div>
+
+        <div class="payment-card__section">
+          <div class="payment-card__label">Resultado del escaneo</div>
+          <div class="payment-card__score-row">
+            <div class="payment-card__score-badge" id="payment-score" style="background: rgba(245,158,11,0.1); color: #f59e0b;">-</div>
+            <div class="payment-card__score-info">
+              <div class="payment-card__score-title">Vulnerabilidades detectadas</div>
+              <div class="payment-card__score-detail" id="payment-detail">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-card__section">
+          <div class="payment-card__label">Incluido en el informe premium</div>
+          <ul class="payment-card__features">
+            <li class="payment-card__feature">✅ 15+ verificaciones detalladas</li>
+            <li class="payment-card__feature">✅ Recomendaciones de solución</li>
+            <li class="payment-card__feature">✅ Cookie & Session Security</li>
+            <li class="payment-card__feature">✅ Sensitive Files detection</li>
+            <li class="payment-card__feature">✅ Source Map & Directory listing</li>
+            <li class="payment-card__feature">✅ CORS & Access Control</li>
+          </ul>
+        </div>
+
+        <div class="payment-card__section" style="text-align: center;">
+          <div class="payment-card__price-row">
+            <span class="payment-card__price">€29</span>
+            <span class="payment-card__price-label">por informe</span>
+          </div>
+          <button class="payment-card__pay-btn" id="pay-btn">
+            Desbloquear informe completo →
+          </button>
+          <div class="payment-card__secure">🔒 Pago seguro con PayPal</div>
+        </div>
+      </div>
+
+      <!-- Full report (after payment) -->
+      <div id="report-section" class="report-section" hidden>
+        <div class="report-section__title">🎉 ¡Informe Desbloqueado!</div>
+        <div id="full-results"></div>
+      </div>
+
+      <div style="text-align: center">
+        <a href="/" class="back-link">← Volver a Securitia</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = new URLSearchParams(window.location.search).get('token');
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+    const paymentCard = document.getElementById('payment-card');
+    const reportSection = document.getElementById('report-section');
+    const fullResults = document.getElementById('full-results');
+
+    const scoreColors = { A: '#22c55e', B: '#84cc16', C: '#f59e0b', D: '#f97316', F: '#ef4444' };
+    const severityIcons = { critical: '🔴', warning: '🟡', passed: '🟢' };
+
+    async function loadReport() {
+      if (!token) {
+        loadingState.hidden = true;
+        errorState.hidden = false;
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/report/${token}`);
+        if (!res.ok) throw new Error('Invalid token');
+        const data = await res.json();
+
+        loadingState.hidden = true;
+
+        if (data.paid) {
+          showFullReport(data);
+        } else {
+          showPaymentCard(data);
+        }
+      } catch {
+        loadingState.hidden = true;
+        errorState.hidden = false;
+      }
+    }
+
+    function showPaymentCard(data) {
+      paymentCard.hidden = false;
+      document.getElementById('payment-url').textContent = data.url;
+
+      const scoreBadge = document.getElementById('payment-score');
+      scoreBadge.textContent = data.score;
+      scoreBadge.style.color = scoreColors[data.score] || '#f59e0b';
+      scoreBadge.style.background = (scoreColors[data.score] || '#f59e0b') + '20';
+
+      document.getElementById('payment-detail').textContent =
+        `${data.criticalCount} críticos · ${data.warningCount} advertencias · ${data.passedCount} pasados`;
+
+      document.getElementById('pay-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('pay-btn');
+        btn.disabled = true;
+        btn.textContent = 'Procesando...';
+
+        try {
+          const res = await fetch('/api/payment/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token }),
+          });
+
+          if (res.ok) {
+            // Reload report
+            const reportRes = await fetch(`/api/report/${token}`);
+            const reportData = await reportRes.json();
+            paymentCard.hidden = true;
+            showFullReport(reportData);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = 'Error - Reintentar →';
+        }
+      });
+    }
+
+    function showFullReport(data) {
+      reportSection.hidden = false;
+      paymentCard.hidden = true;
+
+      fullResults.innerHTML = data.results.map(r => {
+        const icon = severityIcons[r.severity] || '⚪';
+        const colorMap = { critical: '#ef4444', warning: '#f59e0b', passed: '#22c55e' };
+        const borderColor = colorMap[r.severity] || '#374151';
+
+        return `
+          <div style="background: var(--bg-card); border-left: 4px solid ${borderColor}; border-radius: 12px; padding: 20px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <span>${icon}</span>
+              <strong style="color: #fff; font-size: 0.95rem;">${r.name}</strong>
+              <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-muted); padding: 2px 10px; background: rgba(255,255,255,0.05); border-radius: 999px;">${r.category}</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">${r.description}</p>
+            ${r.recommendation ? `<div style="font-size: 0.8rem; color: #00f0ff; margin-top: 8px;">💡 ${r.recommendation}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    loadReport();
+  </script>
+</body>
+</html>

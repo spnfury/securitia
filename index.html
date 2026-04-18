@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Securitia — Escáner de Vulnerabilidades Web</title>
+    <meta
+      name="description"
+      content="Detecta vulnerabilidades en cualquier sitio web en segundos. Escaneo real con 15+ verificaciones de seguridad. Protege tu web ahora."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/animations.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"
+    />
+  </head>
+  <body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--1"></div>
+    <div class="bg-glow bg-glow--2"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+      <div class="nav__container">
+        <a href="/" class="nav__logo">
+          <span class="nav__logo-icon">🛡️</span>
+          <span class="nav__logo-text">SECURITIA</span>
+        </a>
+        <div class="nav__links">
+          <a href="#how-it-works" class="nav__link" data-text="nav.link.how"
+            >Cómo funciona</a
+          >
+          <a
+            href="#vulnerabilities"
+            class="nav__link"
+            data-text="nav.link.vulns"
+            >Vulnerabilidades</a
+          >
+          <a href="#pricing" class="nav__link" data-text="nav.link.pricing"
+            >Precios</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="hero__container">
+        <div class="hero__badge">
+          <span class="hero__badge-dot"></span>
+          <span data-text="hero.badge"
+            >Motor de análisis v2.0 — 15+ verificaciones reales</span
+          >
+        </div>
+        <h1 class="hero__title">
+          <span data-text="hero.title.pre">Detecta</span>
+          <span class="gradient-text" data-text="hero.title.highlight"
+            >vulnerabilidades</span
+          ><br />
+          <span data-text="hero.title.post">en tu sitio web</span>
+        </h1>
+        <p class="hero__subtitle" data-text="hero.subtitle">
+          Escaneo de seguridad real con más de 15 verificaciones. Obtén un
+          informe detallado con recomendaciones para proteger tu web.
+        </p>
+
+        <!-- Scanner Input -->
+        <div class="scanner-input" id="scanner-input">
+          <div class="scanner-input__icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+          </div>
+          <input
+            type="url"
+            id="url-input"
+            class="scanner-input__field"
+            placeholder="https://tu-sitio-web.com"
+            autocomplete="url"
+          />
+          <button id="scan-btn" class="scanner-input__btn">
+            <span class="scanner-input__btn-text" data-text="hero.btn"
+              >Escanear ahora</span
+            >
+            <span class="scanner-input__btn-loading" hidden>
+              <svg class="spinner" width="20" height="20" viewBox="0 0 24 24">
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-dasharray="40 20"
+                />
+              </svg>
+            </span>
+          </button>
+        </div>
+        <p class="hero__hint" data-text="hero.hint">
+          Prueba con tu propio sitio web o cualquier URL pública
+        </p>
+
+        <!-- Stats -->
+        <div class="hero__stats">
+          <div class="hero__stat">
+            <span class="hero__stat-number" id="stat-scans">0</span>
+            <span class="hero__stat-label" data-text="hero.stats.scansLabel"
+              >Escaneos realizados</span
+            >
+          </div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat">
+            <span class="hero__stat-number" id="stat-vulns">0</span>
+            <span class="hero__stat-label" data-text="hero.stats.vulnsLabel"
+              >Vulnerabilidades detectadas</span
+            >
+          </div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat">
+            <span class="hero__stat-number">15+</span>
+            <span class="hero__stat-label" data-text="hero.stats.checksLabel"
+              >Verificaciones de seguridad</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scanner Terminal (appears after scan) -->
+    <section class="terminal-section" id="terminal-section" hidden>
+      <div class="terminal">
+        <div class="terminal__header">
+          <div class="terminal__dots">
+            <span class="terminal__dot terminal__dot--red"></span>
+            <span class="terminal__dot terminal__dot--yellow"></span>
+            <span class="terminal__dot terminal__dot--green"></span>
+          </div>
+          <span class="terminal__title"
+            >securitia scan — <span id="terminal-url"></span
+          ></span>
+        </div>
+        <div class="terminal__body" id="terminal-body">
+          <!-- Lines will be injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section (appears after scan) -->
+    <section class="results-section" id="results-section" hidden>
+      <div class="results">
+        <!-- Score Card -->
+        <div class="score-card" id="score-card">
+          <div class="score-card__header">
+            <h2 class="score-card__title">Puntuación de Seguridad</h2>
+          </div>
+          <div class="score-card__score" id="score-value">-</div>
+          <div class="score-card__stats">
+            <div class="score-card__stat score-card__stat--critical">
+              <span id="result-critical">0</span>
+              <small>Críticos</small>
+            </div>
+            <div class="score-card__stat score-card__stat--warning">
+              <span id="result-warning">0</span>
+              <small>Advertencias</small>
+            </div>
+            <div class="score-card__stat score-card__stat--passed">
+              <span id="result-passed">0</span>
+              <small>Pasados</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results List -->
+        <div class="results__list" id="results-list">
+          <!-- Results will be injected by JS -->
+        </div>
+
+        <!-- CTA -->
+        <div class="results__cta" id="results-cta">
+          <div class="results__cta-icon">📧</div>
+          <h3 class="results__cta-title" data-text="results.cta.title">
+            Recibe el informe completo en tu email
+          </h3>
+          <p class="results__cta-desc" data-text="results.cta.desc">
+            Introduce tu nombre y email para recibir el reporte detallado con
+            todas las recomendaciones.
+          </p>
+          <form id="lead-form" class="lead-form">
+            <input
+              type="text"
+              id="lead-name"
+              class="lead-form__input"
+              placeholder="Tu nombre"
+              required
+            />
+            <input
+              type="email"
+              id="lead-email"
+              class="lead-form__input"
+              placeholder="tu@email.com"
+              required
+            />
+            <button type="submit" class="lead-form__btn" id="lead-btn">
+              <span class="lead-form__btn-text" data-text="results.cta.btn"
+                >Enviar informe →</span
+              >
+              <span class="lead-form__btn-loading" hidden>Enviando...</span>
+            </button>
+          </form>
+          <p class="lead-form__hint" id="lead-status"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag" data-text="how.tag">Proceso</span>
+          <h2 class="section-title" data-text="how.title">Cómo funciona</h2>
+          <p class="section-desc" data-text="how.desc">
+            Un análisis de seguridad completo en tres sencillos pasos
+          </p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step__number">01</div>
+            <div class="step__icon">🔗</div>
+            <h3 class="step__title" data-text="how.step1.title">
+              Introduce la URL
+            </h3>
+            <p class="step__desc" data-text="how.step1.desc">
+              Pega la URL de cualquier sitio web público que quieras analizar.
+            </p>
+          </div>
+          <div class="step__connector"></div>
+          <div class="step">
+            <div class="step__number">02</div>
+            <div class="step__icon">⚡</div>
+            <h3 class="step__title" data-text="how.step2.title">
+              Escaneo automático
+            </h3>
+            <p class="step__desc" data-text="how.step2.desc">
+              Nuestro motor ejecuta más de 15 verificaciones de seguridad en
+              tiempo real contra tu sitio.
+            </p>
+          </div>
+          <div class="step__connector"></div>
+          <div class="step">
+            <div class="step__number">03</div>
+            <div class="step__icon">📊</div>
+            <h3 class="step__title" data-text="how.step3.title">
+              Recibe tu informe
+            </h3>
+            <p class="step__desc" data-text="how.step3.desc">
+              Obtén un informe detallado con vulnerabilidades encontradas y cómo
+              solucionarlas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vulnerability Types -->
+    <section class="vuln-section" id="vulnerabilities">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag" data-text="vulns.tag">Protección</span>
+          <h2 class="section-title" data-text="vulns.title">Qué analizamos</h2>
+          <p class="section-desc" data-text="vulns.desc">
+            Verificaciones reales contra las vulnerabilidades más comunes en
+            sitios web
+          </p>
+        </div>
+        <div class="vuln-grid">
+          <div class="vuln-card">
+            <div class="vuln-card__icon">🔒</div>
+            <h3 class="vuln-card__title" data-text="vulns.card1.title">
+              HTTPS & TLS
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card1.desc">
+              Verificamos el cifrado de la comunicación y la configuración del
+              certificado SSL.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--free">Gratuito</span>
+          </div>
+          <div class="vuln-card">
+            <div class="vuln-card__icon">🛡️</div>
+            <h3 class="vuln-card__title" data-text="vulns.card2.title">
+              Security Headers
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card2.desc">
+              X-Frame-Options, X-Content-Type-Options, CSP y otros headers de
+              seguridad críticos.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--free">Gratuito</span>
+          </div>
+          <div class="vuln-card">
+            <div class="vuln-card__icon">📋</div>
+            <h3 class="vuln-card__title" data-text="vulns.card3.title">
+              Content Security Policy
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card3.desc">
+              Analizamos la configuración de CSP para prevenir ataques XSS e
+              inyección de código.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--free">Gratuito</span>
+          </div>
+          <div class="vuln-card">
+            <div class="vuln-card__icon">🍪</div>
+            <h3 class="vuln-card__title" data-text="vulns.card4.title">
+              Cookie Security
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card4.desc">
+              Flags Secure, HttpOnly y SameSite. Protege las sesiones de tus
+              usuarios.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--premium">Premium</span>
+          </div>
+          <div class="vuln-card">
+            <div class="vuln-card__icon">🌐</div>
+            <h3 class="vuln-card__title" data-text="vulns.card5.title">
+              CORS & Access Control
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card5.desc">
+              Detectamos configuraciones CORS permisivas que expongan tu API a
+              cualquier origen.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--premium">Premium</span>
+          </div>
+          <div class="vuln-card">
+            <div class="vuln-card__icon">📁</div>
+            <h3 class="vuln-card__title" data-text="vulns.card6.title">
+              Archivos Sensibles
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card6.desc">
+              .env, .git, wp-config.php y otros archivos que nunca deberían ser
+              accesibles.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--premium">Premium</span>
+          </div>
+          <div class="vuln-card">
+            <div class="vuln-card__icon">🗺️</div>
+            <h3 class="vuln-card__title" data-text="vulns.card7.title">
+              Source Maps
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card7.desc">
+              ¿Tus source maps están expuestos? Podrían revelar tu código fuente
+              original.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--premium">Premium</span>
+          </div>
+          <div class="vuln-card">
+            <div class="vuln-card__icon">↩️</div>
+            <h3 class="vuln-card__title" data-text="vulns.card8.title">
+              Open Redirects
+            </h3>
+            <p class="vuln-card__desc" data-text="vulns.card8.desc">
+              Detectamos redirecciones abiertas que podrían usarse para
+              phishing.
+            </p>
+            <span class="vuln-card__tag vuln-card__tag--premium">Premium</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing-section" id="pricing">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag" data-text="pricing.tag">Planes</span>
+          <h2 class="section-title" data-text="pricing.title">Elige tu plan</h2>
+          <p class="section-desc" data-text="pricing.desc">
+            Desde un escaneo gratuito hasta un informe de seguridad completo
+          </p>
+        </div>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="pricing-card__header">
+              <h3 class="pricing-card__name" data-text="pricing.free.name">
+                Gratuito
+              </h3>
+              <div class="pricing-card__price" data-text="pricing.free.price">
+                €0
+              </div>
+              <p class="pricing-card__period" data-text="pricing.free.period">
+                por escaneo
+              </p>
+            </div>
+            <ul class="pricing-card__features">
+              <li class="pricing-card__feature">✅ HTTPS Encryption check</li>
+              <li class="pricing-card__feature">
+                ✅ Security Headers analysis
+              </li>
+              <li class="pricing-card__feature">✅ Content Security Policy</li>
+              <li class="pricing-card__feature pricing-card__feature--disabled">
+                🔒 Cookie Security
+              </li>
+              <li class="pricing-card__feature pricing-card__feature--disabled">
+                🔒 CORS Configuration
+              </li>
+              <li class="pricing-card__feature pricing-card__feature--disabled">
+                🔒 Sensitive Files scan
+              </li>
+              <li class="pricing-card__feature pricing-card__feature--disabled">
+                🔒 +9 verificaciones más
+              </li>
+            </ul>
+            <a
+              href="#hero"
+              class="pricing-card__btn pricing-card__btn--outline"
+              data-text="pricing.free.cta"
+              >Escanear gratis</a
+            >
+          </div>
+          <div class="pricing-card pricing-card--featured">
+            <div class="pricing-card__badge" data-text="pricing.premium.badge">
+              Más popular
+            </div>
+            <div class="pricing-card__header">
+              <h3 class="pricing-card__name" data-text="pricing.premium.name">
+                Premium
+              </h3>
+              <div
+                class="pricing-card__price"
+                data-text="pricing.premium.price"
+              >
+                €29
+              </div>
+              <p
+                class="pricing-card__period"
+                data-text="pricing.premium.period"
+              >
+                por informe
+              </p>
+            </div>
+            <ul class="pricing-card__features">
+              <li class="pricing-card__feature">
+                ✅ Todo lo del plan Gratuito
+              </li>
+              <li class="pricing-card__feature">
+                ✅ 15+ verificaciones completas
+              </li>
+              <li class="pricing-card__feature">
+                ✅ Recomendaciones detalladas
+              </li>
+              <li class="pricing-card__feature">
+                ✅ Cookie & Session Security
+              </li>
+              <li class="pricing-card__feature">
+                ✅ Sensitive Files detection
+              </li>
+              <li class="pricing-card__feature">
+                ✅ Source Map & Directory listing
+              </li>
+              <li class="pricing-card__feature">✅ Informe PDF descargable</li>
+            </ul>
+            <a
+              href="#hero"
+              class="pricing-card__btn pricing-card__btn--primary"
+              data-text="pricing.premium.cta"
+              >Escanear y desbloquear</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer__container">
+        <div class="footer__brand">
+          <span class="footer__logo">🛡️ SECURITIA</span>
+          <p class="footer__desc" data-text="footer.desc">
+            Plataforma de detección de vulnerabilidades web. Protege tu
+            presencia digital.
+          </p>
+        </div>
+        <div class="footer__links">
+          <a href="#" class="footer__link" data-text="footer.link.privacy"
+            >Privacidad</a
+          >
+          <a href="#" class="footer__link" data-text="footer.link.terms"
+            >Términos</a
+          >
+          <a
+            href="mailto:info@securitia.com"
+            class="footer__link"
+            data-text="footer.link.contact"
+            >Contacto</a
+          >
+        </div>
+        <div class="footer__copy" data-text="footer.copy">
+          © 2026 Securitia. Todos los derechos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
