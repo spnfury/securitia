@@ -288,6 +288,24 @@ app.get("/api/stats", (req, res) => {
   });
 });
 
+/**
+ * POST /api/contact
+ * Handle contact form submissions
+ */
+app.post("/api/contact", (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ error: "Todos los campos son requeridos" });
+  }
+
+  // In production, this would send an email or save to a database
+  console.log(`📬 Contact form: ${name} (${email}) - ${subject}`);
+  console.log(`   Message: ${message}`);
+
+  res.json({ success: true, message: "Mensaje recibido. Te contactaremos pronto." });
+});
+
 // SPA fallback for Vite build
 app.get("/{*splat}", (req, res) => {
   if (req.path.startsWith("/api/")) {

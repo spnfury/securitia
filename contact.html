@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacto — Securitia</title>
+    <meta
+      name="description"
+      content="Contacta con el equipo de Securitia. Estamos aquí para ayudarte con tus dudas sobre análisis de seguridad web."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/animations.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"
+    />
+    <style>
+      .page-container {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 120px 24px 80px;
+      }
+      .page-header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+      .page-title {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+      .page-subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 32px;
+      }
+      @media (max-width: 640px) {
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .contact-info {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-xl);
+        padding: 32px;
+      }
+      .contact-info__title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 24px;
+      }
+      .contact-info__item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .contact-info__item:last-child {
+        margin-bottom: 0;
+      }
+      .contact-info__icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(0, 240, 255, 0.1);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .contact-info__content {
+        flex: 1;
+      }
+      .contact-info__label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+      .contact-info__value {
+        font-size: 0.95rem;
+        color: var(--text-primary);
+      }
+      .contact-info__value a {
+        color: var(--accent-cyan);
+        text-decoration: none;
+        transition: opacity var(--transition-fast);
+      }
+      .contact-info__value a:hover {
+        opacity: 0.8;
+      }
+      .contact-form-wrapper {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-xl);
+        padding: 32px;
+      }
+      .contact-form__title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 24px;
+      }
+      .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .form-group__label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .form-group__input,
+      .form-group__textarea {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 14px 16px;
+        color: #fff;
+        font-size: 0.95rem;
+        font-family: var(--font-sans);
+        outline: none;
+        transition: border-color var(--transition-fast);
+      }
+      .form-group__input:focus,
+      .form-group__textarea:focus {
+        border-color: var(--accent-cyan);
+      }
+      .form-group__input::placeholder,
+      .form-group__textarea::placeholder {
+        color: var(--text-muted);
+      }
+      .form-group__textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      .form-submit {
+        background: linear-gradient(135deg, var(--accent-cyan), #00b8d4);
+        color: #0a0a0f;
+        border: none;
+        padding: 14px 28px;
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+      .form-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0, 240, 255, 0.3);
+      }
+      .form-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .form-status {
+        font-size: 0.85rem;
+        margin-top: 8px;
+      }
+      .form-status--success {
+        color: var(--accent-green);
+      }
+      .form-status--error {
+        color: var(--accent-red);
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent-cyan);
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        transition: opacity var(--transition-fast);
+      }
+      .back-link:hover {
+        opacity: 0.8;
+      }
+      .faq-section {
+        margin-top: 48px;
+      }
+      .faq-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .faq-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 20px;
+      }
+      .faq-item__q {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+      .faq-item__a {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--1"></div>
+    <div class="bg-glow bg-glow--2"></div>
+
+    <nav class="nav">
+      <div class="nav__container">
+        <a href="/" class="nav__logo">
+          <span class="nav__logo-icon">🛡️</span>
+          <span class="nav__logo-text">SECURITIA</span>
+        </a>
+        <div class="nav__links">
+          <a href="/#how-it-works" class="nav__link">Cómo funciona</a>
+          <a href="/#vulnerabilities" class="nav__link">Vulnerabilidades</a>
+          <a href="/#pricing" class="nav__link">Precios</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="page-container">
+      <a href="/" class="back-link">← Volver al inicio</a>
+      
+      <header class="page-header">
+        <h1 class="page-title">Contacto</h1>
+        <p class="page-subtitle">¿Tienes preguntas? Estamos aquí para ayudarte.</p>
+      </header>
+
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h2 class="contact-info__title">Información</h2>
+          
+          <div class="contact-info__item">
+            <div class="contact-info__icon">📧</div>
+            <div class="contact-info__content">
+              <div class="contact-info__label">Email</div>
+              <div class="contact-info__value">
+                <a href="mailto:info@securitia.com">info@securitia.com</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-info__item">
+            <div class="contact-info__icon">🌐</div>
+            <div class="contact-info__content">
+              <div class="contact-info__label">Web</div>
+              <div class="contact-info__value">
+                <a href="/">securitia.com</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-info__item">
+            <div class="contact-info__icon">⏰</div>
+            <div class="contact-info__content">
+              <div class="contact-info__label">Respuesta</div>
+              <div class="contact-info__value">24-48 horas laborables</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-wrapper">
+          <h2 class="contact-form__title">Envíanos un mensaje</h2>
+          <form class="contact-form" id="contact-form">
+            <div class="form-group">
+              <label class="form-group__label" for="name">Nombre</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-group__input"
+                placeholder="Tu nombre"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-group__label" for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-group__input"
+                placeholder="tu@email.com"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-group__label" for="subject">Asunto</label>
+              <select id="subject" name="subject" class="form-group__input" required>
+                <option value="">Selecciona un asunto</option>
+                <option value="support">Soporte técnico</option>
+                <option value="sales">Información sobre precios</option>
+                <option value="enterprise">Soluciones enterprise</option>
+                <option value="partnership">Colaboraciones</option>
+                <option value="other">Otro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-group__label" for="message">Mensaje</label>
+              <textarea
+                id="message"
+                name="message"
+                class="form-group__textarea"
+                placeholder="¿En qué podemos ayudarte?"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="form-submit" id="submit-btn">
+              Enviar mensaje
+            </button>
+            <p class="form-status" id="form-status"></p>
+          </form>
+        </div>
+      </div>
+
+      <section class="faq-section">
+        <h2 class="faq-title">Preguntas frecuentes</h2>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <div class="faq-item__q">¿Cómo funciona el escaneo?</div>
+            <div class="faq-item__a">Introduce la URL del sitio web y nuestro motor analiza automáticamente más de 15 verificaciones de seguridad en tiempo real.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-item__q">¿Qué incluye el informe premium?</div>
+            <div class="faq-item__a">El informe premium incluye todas las verificaciones, recomendaciones detalladas y soporte prioritario para resolver las vulnerabilidades.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-item__q">¿Es seguro escanear mi web?</div>
+            <div class="faq-item__a">Sí, nuestros escaneos son pasivos y no modifican ni dañan tu sitio web. Solo analizamos la configuración de seguridad visible públicamente.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-item__q">¿Ofrecen planes enterprise?</div>
+            <div class="faq-item__a">Sí, contáctanos para obtener información sobre nuestros planes empresariales con escaneos periódicos y API de integración.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__container">
+        <div class="footer__brand">
+          <span class="footer__logo">🛡️ SECURITIA</span>
+          <p class="footer__desc">Plataforma de detección de vulnerabilidades web.</p>
+        </div>
+        <div class="footer__links">
+          <a href="/privacy.html" class="footer__link">Privacidad</a>
+          <a href="/terms.html" class="footer__link">Términos</a>
+          <a href="/contact.html" class="footer__link">Contacto</a>
+        </div>
+        <div class="footer__copy">© 2026 Securitia. Todos los derechos reservados.</div>
+      </div>
+    </footer>
+
+    <script>
+      const form = document.getElementById('contact-form');
+      const submitBtn = document.getElementById('submit-btn');
+      const formStatus = document.getElementById('form-status');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+        formStatus.textContent = '';
+        formStatus.className = 'form-status';
+        
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          
+          if (res.ok) {
+            formStatus.textContent = '✅ Mensaje enviado correctamente. Te responderemos pronto.';
+            formStatus.className = 'form-status form-status--success';
+            form.reset();
+          } else {
+            throw new Error('Error al enviar');
+          }
+        } catch (err) {
+          formStatus.textContent = '❌ Error al enviar el mensaje. Inténtalo de nuevo o envíanos un email directamente.';
+          formStatus.className = 'form-status form-status--error';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Enviar mensaje';
+        }
+      });
+    </script>
+  </body>
+</html>

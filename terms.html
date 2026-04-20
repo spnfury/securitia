@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Términos de Uso — Securitia</title>
+    <meta
+      name="description"
+      content="Términos de Uso de Securitia. Conoce las condiciones de uso de nuestro servicio de análisis de seguridad web."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/animations.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"
+    />
+    <style>
+      .page-container {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 120px 24px 80px;
+      }
+      .page-header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+      .page-title {
+        font-size: clamp(2rem, 4vw, 2.5rem);
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+      .page-subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary);
+      }
+      .page-content {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-xl);
+        padding: 40px;
+      }
+      .page-content h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 32px 0 16px;
+      }
+      .page-content h2:first-child {
+        margin-top: 0;
+      }
+      .page-content p {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+        margin-bottom: 16px;
+      }
+      .page-content ul, .page-content ol {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 16px;
+        padding-left: 24px;
+      }
+      .page-content li {
+        margin-bottom: 8px;
+      }
+      .page-content strong {
+        color: var(--text-primary);
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent-cyan);
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        transition: opacity var(--transition-fast);
+      }
+      .back-link:hover {
+        opacity: 0.8;
+      }
+      .last-updated {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-subtle);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--1"></div>
+    <div class="bg-glow bg-glow--2"></div>
+
+    <nav class="nav">
+      <div class="nav__container">
+        <a href="/" class="nav__logo">
+          <span class="nav__logo-icon">🛡️</span>
+          <span class="nav__logo-text">SECURITIA</span>
+        </a>
+        <div class="nav__links">
+          <a href="/#how-it-works" class="nav__link">Cómo funciona</a>
+          <a href="/#vulnerabilities" class="nav__link">Vulnerabilidades</a>
+          <a href="/#pricing" class="nav__link">Precios</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="page-container">
+      <a href="/" class="back-link">← Volver al inicio</a>
+      
+      <header class="page-header">
+        <h1 class="page-title">Términos de Uso</h1>
+        <p class="page-subtitle">Condiciones de uso del servicio Securitia</p>
+      </header>
+
+      <div class="page-content">
+        <h2>1. Aceptación de los términos</h2>
+        <p>
+          Al acceder y utilizar el servicio Securitia, aceptas estar sujeto a estos 
+          Términos de Uso. Si no estás de acuerdo con alguna parte de estos términos, 
+          no debes utilizar nuestro servicio.
+        </p>
+
+        <h2>2. Descripción del servicio</h2>
+        <p>
+          Securitia es una plataforma de análisis de vulnerabilidades web que permite 
+          escanear sitios web públicos para detectar posibles problemas de seguridad. 
+          El servicio incluye:
+        </p>
+        <ul>
+          <li>Análisis de configuraciones de seguridad HTTPS/TLS</li>
+          <li>Verificación de cabeceras de seguridad</li>
+          <li>Detección de archivos sensibles expuestos</li>
+          <li>Informes con recomendaciones de corrección</li>
+        </ul>
+
+        <h2>3. Uso permitido</h2>
+        <p>El servicio debe utilizarse únicamente para:</p>
+        <ul>
+          <li>Analizar sitios web de tu propiedad o sitios para los que tengas autorización explícita.</li>
+          <li>Propósitos de seguridad legítimos y éticos.</li>
+          <li>Mejorar la postura de seguridad de los sitios analizados.</li>
+        </ul>
+
+        <h2>4. Uso prohibido</h2>
+        <p>Está estrictamente prohibido:</p>
+        <ul>
+          <li>Utilizar el servicio para escanear sitios sin autorización del propietario.</li>
+          <li>Intentar explotar vulnerabilidades encontradas para obtener acceso no autorizado.</li>
+          <li>Utilizar el servicio con fines maliciosos, de espionaje o competencia desleal.</li>
+          <li>Realizar escaneos automatizados masivos sin autorización previa.</li>
+          <li>Vender o redistribuir los informes sin autorización.</li>
+        </ul>
+
+        <h2>5. Renuncia de garantía</h2>
+        <p>
+          Los resultados proporcionados por Securitia son de carácter informativo y 
+          no constituyen una auditoría de seguridad profesional completa. El servicio 
+          se proporciona "tal cual" sin garantías de ningún tipo, expresas o implícitas.
+        </p>
+        <p>
+          No garantizamos que:
+        </p>
+        <ul>
+          <li>El servicio detecte todas las vulnerabilidades existentes.</li>
+          <li>Los resultados sean completamente precisos o estén actualizados.</li>
+          <li>El servicio esté libre de interrupciones o errores.</li>
+        </ul>
+
+        <h2>6. Limitación de responsabilidad</h2>
+        <p>
+          Securitia no se hace responsable de cualquier daño directo, indirecto, 
+          incidental, especial o consecuente que resulte del uso o la imposibilidad 
+          de uso del servicio, incluyendo pero no limitado a:
+        </p>
+        <ul>
+          <li>Pérdida de datos o beneficios.</li>
+          <li>Interrupción del negocio.</li>
+          <li>Daños a sistemas o redes.</li>
+        </ul>
+
+        <h2>7. Propiedad intelectual</h2>
+        <p>
+          Todo el contenido del servicio, incluyendo textos, gráficos, logos, 
+          iconos, imágenes y software, es propiedad de Securitia o sus licenciantes 
+          y está protegido por las leyes de propiedad intelectual aplicables.
+        </p>
+
+        <h2>8. Pagos y reembolsos</h2>
+        <p>
+          Los servicios de pago se facturan por adelantado. Los informes premium 
+          adquiridos no son reembolsables una vez procesados. En casos excepcionales, 
+          podemos ofrecer créditos o reembolsos parciales a nuestra discreción.
+        </p>
+
+        <h2>9. Privacidad</h2>
+        <p>
+          El tratamiento de los datos personales se rige por nuestra 
+          <a href="/privacy.html" style="color: var(--accent-cyan);">Política de Privacidad</a>, 
+          que forma parte integral de estos Términos de Uso.
+        </p>
+
+        <h2>10. Modificaciones</h2>
+        <p>
+          Nos reservamos el derecho de modificar estos Términos de Uso en cualquier 
+          momento. Los cambios entrarán en vigor inmediatamente tras su publicación 
+          en el sitio web. El uso continuado del servicio constituye la aceptación 
+          de los términos modificados.
+        </p>
+
+        <h2>11. Terminación</h2>
+        <p>
+          Podemos suspender o terminar tu acceso al servicio en cualquier momento, 
+          sin previo aviso, en caso de incumplimiento de estos Términos de Uso o 
+          por cualquier otra razón a nuestra discreción.
+        </p>
+
+        <h2>12. Jurisdicción y ley aplicable</h2>
+        <p>
+          Estos Términos de Uso se rigen por la legislación española. Para cualquier 
+          conflicto derivado de la interpretación o ejecución de estos términos, 
+          las partes se someten a los Juzgados y Tribunales de España.
+        </p>
+
+        <h2>13. Contacto</h2>
+        <p>
+          Para cualquier consulta sobre estos Términos de Uso, puedes contactar 
+          con nosotros en 
+          <a href="mailto:info@securitia.com" style="color: var(--accent-cyan);">info@securitia.com</a>.
+        </p>
+
+        <p class="last-updated">Última actualización: Enero 2026</p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__container">
+        <div class="footer__brand">
+          <span class="footer__logo">🛡️ SECURITIA</span>
+          <p class="footer__desc">Plataforma de detección de vulnerabilidades web.</p>
+        </div>
+        <div class="footer__links">
+          <a href="/privacy.html" class="footer__link">Privacidad</a>
+          <a href="/terms.html" class="footer__link">Términos</a>
+          <a href="/contact.html" class="footer__link">Contacto</a>
+        </div>
+        <div class="footer__copy">© 2026 Securitia. Todos los derechos reservados.</div>
+      </div>
+    </footer>
+  </body>
+</html>
