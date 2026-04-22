@@ -1,12 +1,16 @@
 /**
  * Securitia — Express Backend
  */
-import "dotenv/config";
+// Must be first so process.env is populated before any other module evaluates.
+import "./env.js";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 import express from "express";
 import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import { scanUrl } from "./scanner.js";
 import { sendReportEmail } from "./emailService.js";
@@ -20,11 +24,10 @@ import {
   getStats,
   getAllTexts,
   updateTexts,
+  SUPPORTED_LANGS,
+  DEFAULT_LANG,
 } from "./db.js";
 import { randomBytes } from "crypto";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -235,11 +238,14 @@ function requireAdmin(req, res, next) {
 }
 
 /**
- * GET /api/texts
- * Public: all editable site copy, keyed by id.
+ * GET /api/texts?lang=es|en
+ * Public: all editable site copy, keyed by id, for the requested language.
  */
 app.get("/api/texts", (req, res) => {
-  res.json(getAllTexts());
+  const lang = SUPPORTED_LANGS.includes(req.query.lang)
+    ? req.query.lang
+    : DEFAULT_LANG;
+  res.json({ lang, supportedLangs: SUPPORTED_LANGS, texts: getAllTexts(lang) });
 });
 
 /**
@@ -262,17 +268,20 @@ app.post("/api/admin/login", (req, res) => {
 
 /**
  * PUT /api/admin/texts
- * Update one or many site text entries. Body: { texts: { key: value, ... } }
+ * Update one or many site text entries. Body: { lang, texts: { key: value, ... } }
  */
 app.put("/api/admin/texts", requireAdmin, (req, res) => {
   const texts = req.body?.texts;
+  const lang = SUPPORTED_LANGS.includes(req.body?.lang)
+    ? req.body.lang
+    : DEFAULT_LANG;
   if (!texts || typeof texts !== "object") {
     return res
       .status(400)
-      .json({ error: "Body debe incluir { texts: {...} }" });
+      .json({ error: "Body debe incluir { lang, texts: {...} }" });
   }
-  updateTexts(Object.entries(texts));
-  res.json({ success: true, texts: getAllTexts() });
+  updateTexts(Object.entries(texts), lang);
+  res.json({ success: true, lang, texts: getAllTexts(lang) });
 });
 
 /**
@@ -303,7 +312,10 @@ app.post("/api/contact", (req, res) => {
   console.log(`📬 Contact form: ${name} (${email}) - ${subject}`);
   console.log(`   Message: ${message}`);
 
-  res.json({ success: true, message: "Mensaje recibido. Te contactaremos pronto." });
+  res.json({
+    success: true,
+    message: "Mensaje recibido. Te contactaremos pronto.",
+  });
 });
 
 // SPA fallback for Vite build
