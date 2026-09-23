@@ -9,10 +9,22 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazily created so the server (and scanning) still boots without an API key.
+let resend = null;
+function getResend() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY no configurada en el servidor');
+  }
+  if (!resend) resend = new Resend(process.env.RESEND_API_KEY);
+  return resend;
+}
 
 function loadTemplate() {
   return readFileSync(join(__dirname, 'templates', 'report.html'), 'utf8');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
 function getSeverityColor(severity) {
@@ -49,11 +61,11 @@ function buildResultsHTML(results, showPremium = false) {
     html += `
       <div style="background: #1a1a2e; border-left: 4px solid ${getSeverityColor(r.severity)}; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
         <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px;">
-          ${getSeverityIcon(r.severity)} ${r.name}
+          ${getSeverityIcon(r.severity)} ${escapeHtml(r.name)}
         </div>
-        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">${r.category}</div>
-        <div style="font-size: 13px; color: #cbd5e1; line-height: 1.5;">${r.description}</div>
-        ${r.recommendation ? `<div style="font-size: 12px; color: #00f0ff; margin-top: 8px;">💡 ${r.recommendation}</div>` : ''}
+        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">${escapeHtml(r.category)}</div>
+        <div style="font-size: 13px; color: #cbd5e1; line-height: 1.5;">${escapeHtml(r.description)}</div>
+        ${r.recommendation ? `<div style="font-size: 12px; color: #00f0ff; margin-top: 8px;">💡 ${escapeHtml(r.recommendation)}</div>` : ''}
       </div>
     `;
   });
@@ -64,11 +76,11 @@ function buildResultsHTML(results, showPremium = false) {
       html += `
         <div style="background: #1a1a2e; border-left: 4px solid ${getSeverityColor(r.severity)}; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
           <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px;">
-            ${getSeverityIcon(r.severity)} ${r.name}
+            ${getSeverityIcon(r.severity)} ${escapeHtml(r.name)}
           </div>
-          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">${r.category}</div>
-          <div style="font-size: 13px; color: #cbd5e1; line-height: 1.5;">${r.description}</div>
-          ${r.recommendation ? `<div style="font-size: 12px; color: #00f0ff; margin-top: 8px;">💡 ${r.recommendation}</div>` : ''}
+          <div style="font-size: 12px; color: #94a3b8; margin-bottom: 6px;">${escapeHtml(r.category)}</div>
+          <div style="font-size: 13px; color: #cbd5e1; line-height: 1.5;">${escapeHtml(r.description)}</div>
+          ${r.recommendation ? `<div style="font-size: 12px; color: #00f0ff; margin-top: 8px;">💡 ${escapeHtml(r.recommendation)}</div>` : ''}
         </div>
       `;
     } else {
@@ -78,9 +90,9 @@ function buildResultsHTML(results, showPremium = false) {
             <span style="font-size: 18px;">🔒</span>
           </div>
           <div style="font-size: 14px; font-weight: 700; color: #555; margin-bottom: 4px;">
-            ${r.name}
+            ${escapeHtml(r.name)}
           </div>
-          <div style="font-size: 12px; color: #444;">${r.category}</div>
+          <div style="font-size: 12px; color: #444;">${escapeHtml(r.category)}</div>
           <div style="font-size: 13px; color: #444; filter: blur(3px);">Resultado disponible en la versión premium...</div>
         </div>
       `;
@@ -97,8 +109,8 @@ export async function sendReportEmail({ to, name, scanResult, token, paymentUrl 
 
   // Replace placeholders
   template = template
-    .replace(/{{NAME}}/g, name)
-    .replace(/{{URL}}/g, scanResult.url)
+    .replace(/{{NAME}}/g, escapeHtml(name))
+    .replace(/{{URL}}/g, escapeHtml(scanResult.url))
     .replace(/{{SCORE}}/g, scanResult.score)
     .replace(/{{SCORE_COLOR}}/g, getScoreColor(scanResult.score))
     .replace(/{{TOTAL_CHECKS}}/g, scanResult.totalChecks)
@@ -109,7 +121,7 @@ export async function sendReportEmail({ to, name, scanResult, token, paymentUrl 
     .replace(/{{PAYMENT_URL}}/g, paymentUrl)
     .replace(/{{DATE}}/g, new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }));
 
-  const { data, error } = await resend.emails.send({
+  const { data, error } = await getResend().emails.send({
     from: 'Securitia <onboarding@resend.dev>',
     to: [to],
     subject: `🛡️ Securitia — Informe de Seguridad para ${scanResult.url}`,

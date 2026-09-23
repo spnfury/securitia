@@ -3,7 +3,49 @@
  * Realiza verificaciones HTTP reales contra la URL proporcionada.
  */
 
+import { lookup } from 'dns/promises';
+import { isIP } from 'net';
+
 const TIMEOUT = 8000;
+
+// Refuse to scan private/internal addresses (SSRF: localhost, cloud metadata, LAN).
+function isPrivateAddress(ip) {
+  if (isIP(ip) === 6) {
+    const v = ip.toLowerCase();
+    if (v.startsWith('::ffff:')) return isPrivateAddress(v.slice(7));
+    return v === '::1' || v === '::' || v.startsWith('fc') || v.startsWith('fd') || v.startsWith('fe80');
+  }
+  const [a, b] = ip.split('.').map(Number);
+  return a === 10 || a === 127 || a === 0 ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 100 && b >= 64 && b <= 127);
+}
+
+export async function assertPublicUrl(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new InvalidTargetError('URL no válida');
+  }
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    throw new InvalidTargetError('Solo se permiten URLs http(s)');
+  }
+  const host = parsed.hostname.replace(/^\[|\]$/g, '');
+  let addresses;
+  try {
+    addresses = isIP(host) ? [{ address: host }] : await lookup(host, { all: true });
+  } catch {
+    throw new InvalidTargetError(`No se pudo resolver el dominio ${host}`);
+  }
+  if (addresses.some(a => isPrivateAddress(a.address))) {
+    throw new InvalidTargetError('No se permite escanear direcciones internas o privadas');
+  }
+}
+
+export class InvalidTargetError extends Error {}
 
 async function fetchWithTimeout(url, options = {}) {
   const controller = new AbortController();
@@ -180,21 +222,45 @@ async function checkRobotsTxt(url) {
   }
 }
 
+// Many hosts (SPAs on Vercel/Netlify, custom 404s) answer 200 for every path.
+// Fingerprint that "soft 404" so it isn't reported as an exposed file.
+async function getSoft404Signature(origin) {
+  try {
+    const res = await fetchWithTimeout(`${origin}/securitia-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
+    if (!res.ok) return null;
+    const body = await res.text();
+    return { type: res.headers.get('content-type') || '', length: body.length };
+  } catch {
+    return null;
+  }
+}
+
+function looksLikeSoft404(res, body, soft404) {
+  if (!soft404) return false;
+  const type = res.headers.get('content-type') || '';
+  return type === soft404.type && Math.abs(body.length - soft404.length) < 64;
+}
+
+async function isReallyExposed(fileUrl, soft404) {
+  try {
+    const res = await fetchWithTimeout(fileUrl);
+    if (res.status !== 200) return false;
+    const body = await res.text();
+    if (looksLikeSoft404(res, body, soft404)) return false;
+    // An HTML page served for a config/source file is almost always a fallback page.
+    if (/text\/html/i.test(res.headers.get('content-type') || '') && /<html|<!doctype/i.test(body)) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function checkSensitiveFiles(url) {
   const origin = new URL(url).origin;
   const files = ['.env', '.git/config', 'wp-config.php', '.htaccess', 'composer.json', 'package.json', '.DS_Store'];
-  const found = [];
-
-  for (const file of files) {
-    try {
-      const res = await fetchWithTimeout(`${origin}/${file}`, { method: 'HEAD' });
-      if (res.ok && res.status === 200) {
-        found.push(file);
-      }
-    } catch {
-      // Ignore timeouts/errors
-    }
-  }
+  const soft404 = await getSoft404Signature(origin);
+  const checked = await Promise.all(files.map(f => isReallyExposed(`${origin}/${f}`, soft404)));
+  const found = files.filter((_, i) => checked[i]);
 
   return {
     id: 'sensitive-files',
@@ -317,6 +383,7 @@ async function checkSourceMaps(url) {
     // Look for .js files referenced in HTML
     const jsFiles = html.match(/src=["'][^"']*\.js["']/g) || [];
     const mapFound = [];
+    const soft404 = await getSoft404Signature(origin);
 
     for (const jsRef of jsFiles.slice(0, 3)) {
       const jsUrl = jsRef.match(/src=["']([^"']*)["']/)?.[1];
@@ -324,8 +391,7 @@ async function checkSourceMaps(url) {
 
       const fullUrl = jsUrl.startsWith('http') ? jsUrl : `${origin}${jsUrl.startsWith('/') ? '' : '/'}${jsUrl}`;
       try {
-        const mapRes = await fetchWithTimeout(`${fullUrl}.map`, { method: 'HEAD' });
-        if (mapRes.ok) mapFound.push(`${jsUrl}.map`);
+        if (await isReallyExposed(`${fullUrl}.map`, soft404)) mapFound.push(`${jsUrl}.map`);
       } catch { /* skip */ }
     }
 
@@ -419,6 +485,8 @@ export async function scanUrl(url) {
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     url = `https://${url}`;
   }
+
+  await assertPublicUrl(url);
 
   const startTime = Date.now();
   const results = [];

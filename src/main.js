@@ -48,6 +48,29 @@ function animateCounter(element, target, duration = 1500) {
   }, 16);
 }
 
+// Scan results contain text controlled by the scanned site (e.g. its Server header).
+function escapeHtml(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+  );
+}
+
+// Hosting 404/500 pages are HTML, not JSON; surface a readable error instead.
+async function readJson(res) {
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(
+      res.status === 404
+        ? "El servicio de escaneo no está disponible (API no encontrada)."
+        : `Respuesta inesperada del servidor (HTTP ${res.status}).`,
+    );
+  }
+}
+
 function getSeverityIcon(severity) {
   switch (severity) {
     case "critical":
@@ -287,7 +310,7 @@ async function handleScan() {
       body: JSON.stringify({ url }),
     });
 
-    const data = await res.json();
+    const data = await readJson(res);
 
     if (!res.ok) {
       throw new Error(data.error || "Error al escanear");
@@ -338,18 +361,18 @@ function showResults(data) {
       item.innerHTML = `
         <div class="result-item__header">
           <span class="result-item__icon">${getSeverityIcon(r.severity)}</span>
-          <span class="result-item__name">${r.name}</span>
-          <span class="result-item__category">${r.category}</span>
+          <span class="result-item__name">${escapeHtml(r.name)}</span>
+          <span class="result-item__category">${escapeHtml(r.category)}</span>
         </div>
-        <p class="result-item__desc">${r.description}</p>
-        ${r.recommendation ? `<div class="result-item__recommendation">💡 ${r.recommendation}</div>` : ""}
+        <p class="result-item__desc">${escapeHtml(r.description)}</p>
+        ${r.recommendation ? `<div class="result-item__recommendation">💡 ${escapeHtml(r.recommendation)}</div>` : ""}
       `;
     } else {
       item.innerHTML = `
         <div class="result-item__header">
           <span class="result-item__icon">🔒</span>
-          <span class="result-item__name">${r.name}</span>
-          <span class="result-item__category">${r.category}</span>
+          <span class="result-item__name">${escapeHtml(r.name)}</span>
+          <span class="result-item__category">${escapeHtml(r.category)}</span>
         </div>
         <p class="result-item__desc">Resultado disponible en el informe premium. Introduce tu email para recibir un resumen gratuito.</p>
         <div class="result-item__lock-overlay">🔒 Premium</div>
@@ -392,7 +415,7 @@ async function handleLeadSubmit(e) {
       body: JSON.stringify({ scanId: currentScanId, name, email }),
     });
 
-    const data = await res.json();
+    const data = await readJson(res);
 
     if (!res.ok) {
       throw new Error(data.error || "Error al enviar");
