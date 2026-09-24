@@ -632,7 +632,7 @@ app.get("/api/admin/articles/:id/preview", requireAdmin, (req, res) => {
   res.send(renderArticlePreview(a));
 });
 
-// Generation (synchronous; Ollama can take a few minutes so the client waits)
+// Generation (synchronous; the client waits, provider calls can take a minute)
 let generating = false;
 app.post("/api/admin/articles/generate", requireAdmin, async (req, res) => {
   const { topic, lang = DEFAULT_LANG, keywords = "", publish = false } = req.body || {};

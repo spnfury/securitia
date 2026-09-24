@@ -3,8 +3,11 @@
  *
  * Provider chain (first available wins):
  *   1. Anthropic API      → ANTHROPIC_API_KEY (+ optional ANTHROPIC_MODEL)
- *   2. OpenAI-compatible  → OPENAI_API_KEY (+ OPENAI_BASE_URL, OPENAI_MODEL)
- *   3. Ollama (local)     → OLLAMA_URL (default http://127.0.0.1:11434), OLLAMA_MODEL
+ *   2. Groq (cloud)       → GROQ_API_KEY (+ optional GROQ_MODEL)
+ *   3. OpenAI-compatible  → OPENAI_API_KEY (+ OPENAI_BASE_URL, OPENAI_MODEL)
+ *
+ * Local Ollama was removed on 2026-09-24 (it is stopped permanently on this
+ * server because it saturated the CPU).
  *
  * All providers are asked for the same JSON document so the rest of the app
  * never has to care which model wrote the article.
@@ -13,18 +16,20 @@
 const DEFAULTS = {
   anthropicModel: "claude-sonnet-5",
   openaiModel: "gpt-4o-mini",
-  ollamaUrl: "http://127.0.0.1:11434",
-  ollamaModel: "gemma4:latest",
+  groqModel: "openai/gpt-oss-120b",
 };
 
 export function activeProvider() {
   if (process.env.ANTHROPIC_API_KEY) {
     return { name: "anthropic", model: process.env.ANTHROPIC_MODEL || DEFAULTS.anthropicModel };
   }
+  if (process.env.GROQ_API_KEY) {
+    return { name: "groq", model: process.env.GROQ_MODEL || DEFAULTS.groqModel };
+  }
   if (process.env.OPENAI_API_KEY) {
     return { name: "openai", model: process.env.OPENAI_MODEL || DEFAULTS.openaiModel };
   }
-  return { name: "ollama", model: process.env.OLLAMA_MODEL || DEFAULTS.ollamaModel };
+  return { name: "none", model: null };
 }
 
 const SITE_CONTEXT = {
@@ -108,29 +113,53 @@ async function callOpenAI(prompt, model) {
   return data.choices?.[0]?.message?.content || "";
 }
 
-async function callOllama(prompt, model) {
-  const base = (process.env.OLLAMA_URL || DEFAULTS.ollamaUrl).replace(/\/$/, "");
+async function callGroqOnce(prompt, model) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 15 * 60 * 1000);
+  const timer = setTimeout(() => controller.abort(), 5 * 60 * 1000);
   try {
-    const res = await fetch(`${base}/api/generate`, {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      },
       signal: controller.signal,
       body: JSON.stringify({
         model,
-        prompt,
-        stream: false,
-        format: "json",
-        options: { temperature: 0.7, num_ctx: 8192, num_predict: 6000 },
+        temperature: 0.7,
+        max_tokens: 12000,
+        ...(model.startsWith("openai/gpt-oss") ? { reasoning_effort: "low" } : {}),
+        response_format: { type: "json_object" },
+        messages: [{ role: "user", content: prompt }],
       }),
     });
-    if (!res.ok) throw new Error(`Ollama HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    if (!res.ok) throw new Error(`Groq HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
     const data = await res.json();
-    return data.response || "";
+    return data.choices?.[0]?.message?.content || "";
   } finally {
     clearTimeout(timer);
   }
+}
+
+// Groq free tier has per-model daily token caps; on 429/404/5xx fall through
+// to the next model so a single exhausted model does not stop generation.
+async function callGroq(prompt, model) {
+  const fallbacks = (process.env.GROQ_FALLBACK_MODELS || "openai/gpt-oss-20b,qwen/qwen3.8-27b")
+    .split(",").map((m) => m.trim()).filter(Boolean);
+  const chain = [model, ...fallbacks.filter((m) => m !== model)];
+  let lastErr;
+  for (const m of chain) {
+    try {
+      const text = await callGroqOnce(prompt, m);
+      if (text) return text;
+      lastErr = new Error(`Groq ${m}: respuesta vacía`);
+    } catch (err) {
+      lastErr = err;
+      if (!/HTTP (429|404|413|5\d\d)/.test(err.message)) throw err;
+      console.warn(`[ai] Groq ${m} falló (${err.message.slice(0, 80)}), probando siguiente modelo`);
+    }
+  }
+  throw lastErr;
 }
 
 // ─── Parsing helpers ───
@@ -202,8 +231,9 @@ export async function generateArticle({ topic, lang = "es", keywords = "", audie
 
   let text;
   if (provider.name === "anthropic") text = await callAnthropic(prompt, provider.model);
+  else if (provider.name === "groq") text = await callGroq(prompt, provider.model);
   else if (provider.name === "openai") text = await callOpenAI(prompt, provider.model);
-  else text = await callOllama(prompt, provider.model);
+  else throw new Error("No hay proveedor de IA configurado (define GROQ_API_KEY, ANTHROPIC_API_KEY u OPENAI_API_KEY)");
 
   const raw = extractJson(text);
   const article = normalizeArticle(raw, { topic, lang });
@@ -217,14 +247,6 @@ export async function generateArticle({ topic, lang = "es", keywords = "", audie
 /** Quick health probe for the admin panel. */
 export async function providerStatus() {
   const provider = activeProvider();
-  if (provider.name !== "ollama") return { ...provider, available: true };
-  try {
-    const base = (process.env.OLLAMA_URL || DEFAULTS.ollamaUrl).replace(/\/$/, "");
-    const res = await fetch(`${base}/api/tags`, { signal: AbortSignal.timeout(3000) });
-    const data = await res.json();
-    const models = (data.models || []).map((m) => m.name);
-    return { ...provider, available: models.includes(provider.model), models };
-  } catch (err) {
-    return { ...provider, available: false, error: err.message };
-  }
+  if (provider.name === "none") return { ...provider, available: false, error: "Sin proveedor de IA configurado" };
+  return { ...provider, available: true };
 }

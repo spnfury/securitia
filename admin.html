@@ -306,7 +306,7 @@
                 <button class="btn-primary" id="gen-btn">✨ Generar</button>
                 <span id="gen-status" class="status"></span>
               </div>
-              <p class="status" style="margin-top:10px">Con Ollama local la generación puede tardar 2-6 minutos. No cierres la pestaña.</p>
+              <p class="status" style="margin-top:10px">La generación suele tardar entre 20 y 90 segundos según el proveedor. No cierres la pestaña.</p>
             </div>
             <div class="panel"><h3>Cola de temas (autopublicación)</h3>
               <textarea id="topics-input" rows="4" placeholder="Un tema por línea…"></textarea>
@@ -425,8 +425,8 @@
           </div>
           <div class="panel"><h3>Motor IA activo</h3>
             <p><b>${esc(d.provider.name)}</b> · modelo <span class="mono">${esc(d.provider.model)}</span> · ${d.provider.available ? '<span class="pill pill--ok">disponible</span>' : '<span class="pill pill--err">no disponible</span>'}</p>
-            ${d.provider.models ? `<p class="status">Modelos Ollama instalados: ${d.provider.models.map(esc).join(", ")}</p>` : ""}
-            <p class="status">Prioridad: ANTHROPIC_API_KEY → OPENAI_API_KEY → Ollama local. Cambia las variables en .env y reinicia (<span class="mono">pm2 restart securitia</span>).</p>
+            
+            <p class="status">Prioridad: ANTHROPIC_API_KEY → GROQ_API_KEY → OPENAI_API_KEY. Cambia las variables en .env y reinicia (<span class="mono">pm2 restart securitia</span>).</p>
             <h3 style="margin-top:20px">SEO / GEO</h3>
             <ul class="list"><li><a href="/sitemap.xml" target="_blank">/sitemap.xml</a></li><li><a href="/robots.txt" target="_blank">/robots.txt</a></li><li><a href="/llms.txt" target="_blank">/llms.txt</a></li><li><a href="/blog/rss.xml" target="_blank">/blog/rss.xml</a></li></ul>
           </div></div></div>`;

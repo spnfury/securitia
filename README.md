@@ -6,7 +6,7 @@ Escáner online de vulnerabilidades web — https://securitia.es
 - **Frontend**: HTML + Vite (multi-página: `index`, `contact`, `payment`, `privacy`, `terms`, `admin`).
 - **Backend**: Node 20 + Express 5 + SQLite (`better-sqlite3`). Sirve el `dist/`, la API y el blog SSR.
 - **Blog / SEO / GEO**: `/blog`, `/blog/:slug`, `/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/blog/rss.xml`, JSON-LD (Organization, WebSite, SoftwareApplication, FAQPage, BlogPosting, BreadcrumbList).
-- **Generador de artículos IA**: `server/ai.js`. Proveedor por prioridad: `ANTHROPIC_API_KEY` → `OPENAI_API_KEY` → Ollama local. Cola de temas con autopublicación.
+- **Generador de artículos IA**: `server/ai.js`. Proveedor por prioridad: `ANTHROPIC_API_KEY` → `GROQ_API_KEY` → `OPENAI_API_KEY`. Cola de temas con autopublicación.
 - **Admin** (`/admin`): dashboard, escaneos, leads, contactos, eventos (log completo), artículos, editor visual de textos, ajustes. Exportación CSV.
 
 ## Registros que se guardan (SQLite persistente)
