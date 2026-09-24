@@ -421,8 +421,12 @@ async function handleLeadSubmit(e) {
       throw new Error(data.error || "Error al enviar");
     }
 
-    leadStatus.textContent =
-      "✅ ¡Informe enviado! Revisa tu bandeja de entrada.";
+    if (data.emailSent === false && data.reportUrl) {
+      leadStatus.innerHTML = `✅ Solicitud registrada. <a href="${escapeHtml(data.reportUrl)}" style="color:var(--accent-cyan)">Ver mi informe →</a>`;
+    } else {
+      leadStatus.textContent =
+        "✅ ¡Informe enviado! Revisa tu bandeja de entrada.";
+    }
     leadStatus.className = "lead-form__hint";
     leadForm.reset();
   } catch (err) {
@@ -434,6 +438,21 @@ async function handleLeadSubmit(e) {
     leadBtnLoading.hidden = true;
   }
 }
+
+// ─── Lightweight UI analytics (stored server-side) ───
+function track(type, meta) {
+  try {
+    const body = JSON.stringify({ type, path: location.pathname, meta });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("/api/event", new Blob([body], { type: "application/json" }));
+    } else {
+      fetch("/api/event", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true });
+    }
+  } catch {}
+}
+document.querySelectorAll(".pricing-card__btn").forEach((btn) =>
+  btn.addEventListener("click", () => track("pricing_cta", { text: btn.textContent.trim() })),
+);
 
 // ─── Event Listeners ───
 scanBtn.addEventListener("click", handleScan);

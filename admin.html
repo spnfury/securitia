@@ -3,715 +3,503 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
     <title>Securitia — Admin</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <style>
-      :root {
-        --bg: #0a0e1a;
-        --panel: #111827;
-        --panel-2: #0f172a;
-        --border: #1f2937;
-        --text: #e5e7eb;
-        --muted: #9ca3af;
-        --accent: #6366f1;
-        --accent-hover: #4f46e5;
-        --success: #10b981;
-        --error: #ef4444;
-        --warn: #f59e0b;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        font-family: "Inter", system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-      }
-      button {
-        font-family: inherit;
-        cursor: pointer;
-      }
-      .btn-primary {
-        background: var(--accent);
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 13px;
-      }
-      .btn-primary:hover {
-        background: var(--accent-hover);
-      }
-      .btn-primary:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-      .btn-ghost {
-        background: transparent;
-        color: var(--muted);
-        border: 1px solid var(--border);
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 12px;
-      }
-      .btn-ghost:hover {
-        color: var(--text);
-        border-color: var(--accent);
-      }
-      input[type="password"],
-      input[type="text"],
-      textarea {
-        width: 100%;
-        padding: 10px 12px;
-        background: var(--panel-2);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text);
-        font-size: 13px;
-        font-family: inherit;
-        resize: vertical;
-      }
-      input:focus,
-      textarea:focus {
-        outline: none;
-        border-color: var(--accent);
-      }
-
+      :root{--bg:#0a0e1a;--panel:#111827;--panel-2:#0f172a;--border:#1f2937;--text:#e5e7eb;--muted:#9ca3af;--accent:#6366f1;--accent-hover:#4f46e5;--cyan:#00f0ff;--success:#10b981;--error:#ef4444;--warn:#f59e0b;--mono:"JetBrains Mono",Menlo,monospace}
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{margin:0;font-family:"Inter",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+      button{font-family:inherit;cursor:pointer}
+      a{color:var(--cyan)}
+      .hidden{display:none!important}
+      .btn-primary{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;font-size:13px}
+      .btn-primary:hover{background:var(--accent-hover)}
+      .btn-primary:disabled{opacity:.6;cursor:not-allowed}
+      .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px}
+      .btn-ghost:hover{color:var(--text);border-color:var(--accent)}
+      .btn-danger{background:transparent;color:var(--error);border:1px solid rgba(239,68,68,.4);padding:6px 12px;border-radius:8px;font-size:12px}
+      .btn-sm{padding:4px 10px;font-size:11px}
+      input[type=password],input[type=text],input[type=number],input[type=url],textarea,select{width:100%;padding:10px 12px;background:var(--panel-2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical}
+      input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)}
+      label.lbl{display:block;font-size:11px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+      .status{font-size:12px;color:var(--muted)}
+      .status--success{color:var(--success)}.status--error{color:var(--error)}.status--warn{color:var(--warn)}
       /* Login */
-      .login-card {
-        max-width: 380px;
-        margin: 120px auto;
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 32px;
-      }
-      .login-card h2 {
-        margin: 0 0 8px;
-        font-size: 22px;
-      }
-      .login-card p {
-        margin: 0 0 20px;
-        color: var(--muted);
-        font-size: 14px;
-      }
-      .login-card button {
-        width: 100%;
-        margin-top: 12px;
-      }
-
-      /* Editor layout */
-      .app {
-        display: grid;
-        grid-template-columns: 1fr 460px;
-        grid-template-rows: 56px 1fr;
-        height: 100vh;
-      }
-      .topbar {
-        grid-column: 1 / -1;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
-        background: var(--panel);
-        border-bottom: 1px solid var(--border);
-      }
-      .topbar__brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-      }
-      .topbar__actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .lang-tabs {
-        display: inline-flex;
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        overflow: hidden;
-      }
-      .lang-tabs button {
-        background: transparent;
-        border: none;
-        color: var(--muted);
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-      }
-      .lang-tabs button.is-active {
-        background: var(--accent);
-        color: white;
-      }
-      .status {
-        font-size: 12px;
-        color: var(--muted);
-      }
-      .status--success {
-        color: var(--success);
-      }
-      .status--error {
-        color: var(--error);
-      }
-      .status--warn {
-        color: var(--warn);
-      }
-
-      /* Preview */
-      .preview {
-        position: relative;
-        background: #05060b;
-        border-right: 1px solid var(--border);
-        overflow: hidden;
-      }
-      .preview iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-        background: var(--bg);
-      }
-      .preview__hint {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        background: rgba(99, 102, 241, 0.15);
-        border: 1px solid rgba(99, 102, 241, 0.35);
-        color: #c7d2fe;
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-size: 11px;
-        pointer-events: none;
-      }
-
-      /* Side panel */
-      .side {
-        display: flex;
-        flex-direction: column;
-        background: var(--panel);
-        overflow: hidden;
-      }
-      .side__header {
-        padding: 14px 18px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .side__header h2 {
-        margin: 0;
-        font-size: 14px;
-        color: var(--muted);
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-      .side__search {
-        padding: 12px 18px;
-        border-bottom: 1px solid var(--border);
-      }
-      .side__body {
-        flex: 1;
-        overflow-y: auto;
-        padding: 8px 18px 80px;
-      }
-
-      .section {
-        border-top: 1px solid var(--border);
-        padding: 14px 0;
-      }
-      .section:first-child {
-        border-top: none;
-      }
-      .section__title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        user-select: none;
-      }
-      .section__title h3 {
-        margin: 0;
-        font-size: 13px;
-        color: var(--accent);
-      }
-      .section__title small {
-        font-size: 11px;
-        color: var(--muted);
-        font-family: "SF Mono", Menlo, monospace;
-      }
-      .section__fields {
-        margin-top: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .section.is-collapsed .section__fields {
-        display: none;
-      }
-
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        padding: 8px;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        background: var(--panel-2);
-      }
-      .field.is-focused {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-      }
-      .field.is-dirty {
-        border-left: 3px solid var(--warn);
-      }
-      .field label {
-        font-size: 10px;
-        color: var(--muted);
-        font-family: "SF Mono", Menlo, monospace;
-        letter-spacing: 0.03em;
-      }
-
-      .hidden {
-        display: none !important;
-      }
-
-      @media (max-width: 1024px) {
-        .app {
-          grid-template-columns: 1fr 380px;
-        }
-      }
-      @media (max-width: 800px) {
-        .app {
-          grid-template-columns: 1fr;
-          grid-template-rows: 56px minmax(320px, 40vh) 1fr;
-        }
-        .preview {
-          border-right: none;
-          border-bottom: 1px solid var(--border);
-        }
-      }
+      .login-card{max-width:380px;margin:120px auto;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:32px}
+      .login-card h2{margin:0 0 8px;font-size:22px}
+      .login-card p{margin:0 0 20px;color:var(--muted);font-size:14px}
+      .login-card button{width:100%;margin-top:12px}
+      /* Shell */
+      .shell{display:grid;grid-template-columns:220px 1fr;grid-template-rows:56px 1fr;height:100vh}
+      .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--panel);border-bottom:1px solid var(--border)}
+      .topbar__brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.5px}
+      .topbar__actions{display:flex;align-items:center;gap:10px}
+      .sidebar{background:var(--panel);border-right:1px solid var(--border);padding:14px 10px;overflow-y:auto}
+      .sidebar button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:none;color:var(--muted);padding:10px 12px;border-radius:8px;font-size:13px;font-weight:500}
+      .sidebar button:hover{background:var(--panel-2);color:var(--text)}
+      .sidebar button.is-active{background:rgba(99,102,241,.15);color:#c7d2fe}
+      .sidebar .badge{margin-left:auto;background:var(--error);color:#fff;font-size:10px;padding:1px 6px;border-radius:999px}
+      .main{overflow:auto;padding:24px;min-width:0}
+      .view h1{margin:0 0 4px;font-size:20px}
+      .view .sub{color:var(--muted);margin:0 0 20px;font-size:13px}
+      .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+      .toolbar input[type=text]{max-width:320px}
+      /* Cards */
+      .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+      .kpi{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+      .kpi small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+      .kpi b{font-size:24px;font-weight:800;display:block;margin-top:4px}
+      .kpi span{color:var(--muted);font-size:11px}
+      .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+      .panel h3{margin:0 0 12px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+      .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+      @media(max-width:1000px){.two{grid-template-columns:1fr}.shell{grid-template-columns:64px 1fr}.sidebar button span.txt{display:none}}
+      /* Tables */
+      table{width:100%;border-collapse:collapse;font-size:12.5px}
+      th,td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+      th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;background:var(--panel)}
+      tr:hover td{background:rgba(255,255,255,.02)}
+      td.mono,.mono{font-family:var(--mono);font-size:11.5px}
+      .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
+      .pill--A,.pill--B,.pill--ok{background:rgba(16,185,129,.15);color:#6ee7b7}
+      .pill--C{background:rgba(245,158,11,.15);color:#fcd34d}
+      .pill--D,.pill--F,.pill--err{background:rgba(239,68,68,.15);color:#fca5a5}
+      .pill--draft{background:rgba(156,163,175,.15);color:#d1d5db}
+      .pill--published{background:rgba(16,185,129,.15);color:#6ee7b7}
+      .pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:10px;color:var(--muted);font-size:12px}
+      .bars{display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:10px}
+      .bars div{flex:1;background:linear-gradient(180deg,var(--accent),rgba(99,102,241,.3));border-radius:3px 3px 0 0;min-height:2px;position:relative}
+      .bars div:hover::after{content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:3px 6px;border-radius:4px;font-size:10px;white-space:nowrap;margin-bottom:4px}
+      .list{list-style:none;margin:0;padding:0}
+      .list li{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+      .list li span:last-child{color:var(--muted);font-family:var(--mono)}
+      .truncate{max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:bottom}
+      /* Editor articles */
+      .editor{display:grid;grid-template-columns:1fr 340px;gap:16px}
+      @media(max-width:1100px){.editor{grid-template-columns:1fr}}
+      .editor textarea.md{min-height:520px;font-family:var(--mono);font-size:12.5px;line-height:1.5}
+      .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
+      @keyframes spin{to{transform:rotate(360deg)}}
+      /* Texts editor (iframe) */
+      .texts{display:grid;grid-template-columns:1fr 420px;gap:0;height:calc(100vh - 56px - 48px);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+      .preview{position:relative;background:#05060b;border-right:1px solid var(--border)}
+      .preview iframe{width:100%;height:100%;border:0;background:var(--bg)}
+      .preview__hint{position:absolute;top:12px;left:12px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.35);color:#c7d2fe;padding:6px 10px;border-radius:6px;font-size:11px;pointer-events:none}
+      .side{display:flex;flex-direction:column;background:var(--panel);overflow:hidden}
+      .side__header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px}
+      .side__search{padding:10px 16px;border-bottom:1px solid var(--border)}
+      .side__body{flex:1;overflow-y:auto;padding:8px 16px 80px}
+      .section{border-top:1px solid var(--border);padding:12px 0}
+      .section:first-child{border-top:none}
+      .section__title{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+      .section__title h3{margin:0;font-size:13px;color:var(--accent)}
+      .section__title small{font-size:11px;color:var(--muted);font-family:var(--mono)}
+      .section__fields{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+      .section.is-collapsed .section__fields{display:none}
+      .field{display:flex;flex-direction:column;gap:4px;padding:8px;border-radius:8px;border:1px solid transparent}
+      .field.is-focused{border-color:var(--accent);background:rgba(99,102,241,.08)}
+      .field.is-dirty label::after{content:" •";color:var(--warn)}
+      .field label{font-size:11px;color:var(--muted);font-family:var(--mono)}
+      .lang-tabs{display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+      .lang-tabs button{background:transparent;border:none;color:var(--muted);padding:6px 14px;font-size:12px;font-weight:600;letter-spacing:.05em}
+      .lang-tabs button.is-active{background:var(--accent);color:#fff}
+      details.raw{margin-top:6px}
+      details.raw pre{background:#05060b;padding:10px;border-radius:8px;font-size:11px;overflow:auto;max-height:300px}
     </style>
   </head>
   <body>
-    <!-- Login view -->
+    <!-- Login -->
     <div id="login-view" class="login-card">
-      <h2>🛡️ Acceso admin</h2>
-      <p>Introduce la contraseña para gestionar los textos del sitio.</p>
+      <h2>🛡️ Securitia Admin</h2>
+      <p>Introduce la contraseña de administración.</p>
       <form id="login-form">
-        <input
-          type="password"
-          id="password-input"
-          placeholder="Contraseña"
-          autocomplete="current-password"
-          required
-        />
-        <button type="submit" class="btn-primary">Entrar</button>
-        <p
-          id="login-error"
-          class="status status--error"
-          style="margin: 12px 0 0"
-        ></p>
+        <input id="password-input" type="password" placeholder="Contraseña" autocomplete="current-password" required />
+        <button class="btn-primary" type="submit">Entrar</button>
+        <p id="login-error" class="status status--error" style="margin:10px 0 0"></p>
       </form>
     </div>
 
-    <!-- Editor view -->
-    <div id="editor-view" class="app hidden">
+    <!-- App shell -->
+    <div id="app" class="shell hidden">
       <div class="topbar">
         <div class="topbar__brand">🛡️ SECURITIA · Admin</div>
         <div class="topbar__actions">
-          <div class="lang-tabs" id="lang-tabs">
-            <button type="button" data-lang="es" class="is-active">ES</button>
-            <button type="button" data-lang="en">EN</button>
-          </div>
-          <span id="save-status" class="status"></span>
-          <button id="reload-btn" class="btn-ghost">Recargar</button>
-          <button id="save-btn" class="btn-primary">Guardar cambios</button>
+          <span id="global-status" class="status"></span>
+          <a href="/" target="_blank" class="btn-ghost" style="text-decoration:none">Ver web ↗</a>
+          <a href="/blog" target="_blank" class="btn-ghost" style="text-decoration:none">Blog ↗</a>
           <button id="logout-btn" class="btn-ghost">Salir</button>
         </div>
       </div>
-
-      <div class="preview">
-        <iframe id="preview-frame" title="Preview"></iframe>
-        <div class="preview__hint">
-          Clic en un texto para seleccionarlo · Doble clic para editarlo inline
-        </div>
-      </div>
-
-      <aside class="side">
-        <div class="side__header">
-          <h2>Textos</h2>
-          <small id="dirty-count" class="status"></small>
-        </div>
-        <div class="side__search">
-          <input
-            id="search-input"
-            type="text"
-            placeholder="Buscar clave o contenido…"
-          />
-        </div>
-        <div class="side__body" id="sections"></div>
-      </aside>
+      <nav class="sidebar" id="sidebar">
+        <button data-view="dashboard" class="is-active">📊 <span class="txt">Dashboard</span></button>
+        <button data-view="scans">🔍 <span class="txt">Escaneos</span></button>
+        <button data-view="leads">📧 <span class="txt">Leads</span></button>
+        <button data-view="contacts">📬 <span class="txt">Contactos</span><span class="badge hidden" id="contacts-badge"></span></button>
+        <button data-view="events">🧾 <span class="txt">Eventos</span></button>
+        <button data-view="articles">📝 <span class="txt">Artículos</span></button>
+        <button data-view="texts">✏️ <span class="txt">Textos web</span></button>
+        <button data-view="settings">⚙️ <span class="txt">Ajustes</span></button>
+      </nav>
+      <main class="main" id="main"></main>
     </div>
 
     <script>
-      const SECTIONS = [
-        { id: "nav", title: "Navegación", prefix: "nav." },
-        { id: "hero", title: "Hero (sección principal)", prefix: "hero." },
-        { id: "how", title: "Cómo funciona", prefix: "how." },
-        { id: "vulns", title: "Vulnerabilidades", prefix: "vulns." },
-        { id: "pricing", title: "Precios", prefix: "pricing." },
-        { id: "results", title: "CTA de resultados", prefix: "results." },
-        { id: "footer", title: "Footer", prefix: "footer." },
-      ];
-
+      // ═══════════════ Shared ═══════════════
       const TOKEN_KEY = "securitia_admin_token";
+      const $ = (s, r = document) => r.querySelector(s);
+      const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+      const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      const fmt = (d) => (d ? new Date(d.replace(" ", "T") + (d.endsWith("Z") ? "" : "Z")).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" }) : "");
+      const getToken = () => sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
+      const setToken = (t) => { if (t) { localStorage.setItem(TOKEN_KEY, t); } else { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY); } };
 
-      const loginView = document.getElementById("login-view");
-      const editorView = document.getElementById("editor-view");
-      const loginForm = document.getElementById("login-form");
-      const passwordInput = document.getElementById("password-input");
-      const loginError = document.getElementById("login-error");
-      const logoutBtn = document.getElementById("logout-btn");
-      const saveBtn = document.getElementById("save-btn");
-      const reloadBtn = document.getElementById("reload-btn");
-      const saveStatus = document.getElementById("save-status");
-      const sectionsRoot = document.getElementById("sections");
-      const previewFrame = document.getElementById("preview-frame");
-      const langTabs = document.getElementById("lang-tabs");
-      const searchInput = document.getElementById("search-input");
-      const dirtyCount = document.getElementById("dirty-count");
-
-      // State
-      let currentLang = "es";
-      // Texts loaded from server per language (source of truth for "saved" values).
-      const serverTexts = { es: {}, en: {} };
-      // Local edits per language (key -> value). Empty = no unsaved edit.
-      const localEdits = { es: {}, en: {} };
-
-      function getToken() {
-        return sessionStorage.getItem(TOKEN_KEY);
+      async function api(path, opts = {}) {
+        const res = await fetch(path, {
+          ...opts,
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}`, ...(opts.headers || {}) },
+          body: opts.body && typeof opts.body !== "string" ? JSON.stringify(opts.body) : opts.body,
+        });
+        if (res.status === 401) { setToken(null); showLogin("Sesión expirada, vuelve a entrar."); throw new Error("No autorizado"); }
+        const ct = res.headers.get("content-type") || "";
+        const data = ct.includes("json") ? await res.json() : await res.text();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        return data;
       }
-      function setToken(token) {
-        if (token) sessionStorage.setItem(TOKEN_KEY, token);
-        else sessionStorage.removeItem(TOKEN_KEY);
-      }
+      function setStatus(msg, cls = "") { const el = $("#global-status"); el.textContent = msg; el.className = `status ${cls}`; if (msg) setTimeout(() => { if (el.textContent === msg) el.textContent = ""; }, 5000); }
 
-      function currentValue(key) {
-        return key in localEdits[currentLang]
-          ? localEdits[currentLang][key]
-          : serverTexts[currentLang][key] || "";
-      }
-
-      function showEditor() {
-        loginView.classList.add("hidden");
-        editorView.classList.remove("hidden");
-        loadLang(currentLang);
-      }
-
-      function showLogin() {
-        loginView.classList.remove("hidden");
-        editorView.classList.add("hidden");
-        passwordInput.value = "";
-        passwordInput.focus();
-      }
-
-      loginForm.addEventListener("submit", async (e) => {
+      // ═══════════════ Auth ═══════════════
+      const loginView = $("#login-view"), appView = $("#app");
+      function showLogin(err = "") { loginView.classList.remove("hidden"); appView.classList.add("hidden"); $("#login-error").textContent = err; $("#password-input").value = ""; $("#password-input").focus(); }
+      async function showApp() { loginView.classList.add("hidden"); appView.classList.remove("hidden"); navigate(location.hash.replace("#", "") || "dashboard"); }
+      $("#login-form").addEventListener("submit", async (e) => {
         e.preventDefault();
-        loginError.textContent = "";
         try {
-          const res = await fetch("/api/admin/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password: passwordInput.value }),
-          });
+          const res = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: $("#password-input").value }) });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || "Error de login");
-          setToken(data.token);
-          showEditor();
-        } catch (err) {
-          loginError.textContent = err.message;
-        }
+          setToken(data.token); showApp();
+        } catch (err) { $("#login-error").textContent = err.message; }
       });
+      $("#logout-btn").addEventListener("click", async () => { try { await api("/api/admin/logout", { method: "POST" }); } catch {} setToken(null); showLogin(); });
 
-      logoutBtn.addEventListener("click", () => {
-        setToken(null);
-        showLogin();
-      });
+      // ═══════════════ Router ═══════════════
+      const views = {};
+      function navigate(name) {
+        if (!views[name]) name = "dashboard";
+        location.hash = name;
+        $$("#sidebar button").forEach((b) => b.classList.toggle("is-active", b.dataset.view === name));
+        const main = $("#main"); main.innerHTML = `<div class="view"><p class="sub">Cargando…</p></div>`;
+        views[name](main).catch((err) => { main.innerHTML = `<div class="view"><h1>Error</h1><p class="status status--error">${esc(err.message)}</p></div>`; });
+      }
+      $("#sidebar").addEventListener("click", (e) => { const b = e.target.closest("button[data-view]"); if (b) navigate(b.dataset.view); });
+      window.addEventListener("hashchange", () => { const n = location.hash.replace("#", ""); if (n && !$("#app").classList.contains("hidden")) navigate(n); });
 
-      async function loadLang(lang) {
-        currentLang = lang;
-        updateLangTabs();
-        saveStatus.textContent = "Cargando…";
-        saveStatus.className = "status";
-        const res = await fetch(`/api/texts?lang=${lang}`);
-        const payload = await res.json();
-        serverTexts[lang] = payload.texts || payload;
-        renderSections();
-        refreshIframe();
-        saveStatus.textContent = "";
-        updateDirty();
+      function pagerHtml(p) { return `<div class="pager"><span>${p.total} registros · pág ${p.page}/${p.pages}</span><button class="btn-ghost btn-sm" data-page="${p.page - 1}" ${p.page <= 1 ? "disabled" : ""}>←</button><button class="btn-ghost btn-sm" data-page="${p.page + 1}" ${p.page >= p.pages ? "disabled" : ""}>→</button></div>`; }
+
+      // ═══════════════ Dashboard ═══════════════
+      views.dashboard = async (main) => {
+        const d = await api("/api/admin/overview");
+        const badge = $("#contacts-badge"); badge.textContent = d.totals.unreadContacts; badge.classList.toggle("hidden", !d.totals.unreadContacts);
+        const max = Math.max(1, ...d.daily.map((x) => x.pageviews));
+        const kpi = (l, v, s = "") => `<div class="kpi"><small>${l}</small><b>${v}</b><span>${s}</span></div>`;
+        main.innerHTML = `<div class="view">
+          <h1>Dashboard</h1><p class="sub">BD: <span class="mono">${esc(d.dbPath)}</span> · uptime ${Math.round(d.uptime / 60)} min</p>
+          <div class="cards">
+            ${kpi("Visitas (total)", d.totals.pageviews, `${d.last24h.pageviews} últimas 24h`)}
+            ${kpi("Visitantes únicos 30d", d.totals.visitors30d)}
+            ${kpi("Escaneos", d.totals.scans, `${d.last24h.scans} últimas 24h`)}
+            ${kpi("Leads", d.totals.leads, `${d.last24h.leads} últimas 24h`)}
+            ${kpi("Pagados", d.totals.paid)}
+            ${kpi("Contactos", d.totals.contacts, `${d.totals.unreadContacts} sin leer`)}
+            ${kpi("Artículos", d.totals.articles, `${d.totals.drafts} borradores`)}
+          </div>
+          <div class="panel"><h3>Últimos 30 días — visitas / escaneos / leads</h3>
+            <div class="bars">${d.daily.map((x) => `<div style="height:${Math.round((x.pageviews / max) * 100)}%" data-tip="${x.day}: ${x.pageviews} visitas · ${x.scans} escaneos · ${x.leads} leads"></div>`).join("")}</div>
+          </div>
+          <div class="two">
+            <div class="panel"><h3>Páginas más vistas (30d)</h3><ul class="list">${d.topPages.map((p) => `<li><span class="truncate">${esc(p.path)}</span><span>${p.n}</span></li>`).join("") || "<li>Sin datos</li>"}</ul></div>
+            <div class="panel"><h3>Referrers (30d)</h3><ul class="list">${d.topReferrers.map((p) => `<li><span class="truncate">${esc(p.referrer)}</span><span>${p.n}</span></li>`).join("") || "<li>Sin datos</li>"}</ul></div>
+            <div class="panel"><h3>Dominios más escaneados</h3><ul class="list">${d.topScannedDomains.map((p) => `<li><span class="truncate">${esc(p.url)}</span><span>${p.n}</span></li>`).join("") || "<li>Sin datos</li>"}</ul></div>
+            <div class="panel"><h3>Distribución de puntuación</h3><ul class="list">${d.scoreDistribution.map((p) => `<li><span class="pill pill--${p.score}">${p.score}</span><span>${p.n}</span></li>`).join("") || "<li>Sin datos</li>"}</ul></div>
+          </div>
+          <div class="panel"><h3>Actividad reciente</h3>
+            <table><thead><tr><th>Fecha</th><th>Tipo</th><th>Ruta</th><th>IP</th><th>Detalle</th></tr></thead><tbody>
+            ${d.recentEvents.map((e) => `<tr><td class="mono">${fmt(e.created_at)}</td><td>${esc(e.type)}</td><td class="mono truncate">${esc(e.path || "")}</td><td class="mono">${esc(e.ip || "")}</td><td class="mono truncate">${esc(e.meta_json || e.referrer || "")}</td></tr>`).join("")}
+            </tbody></table></div>
+        </div>`;
+      };
+
+      // ═══════════════ Generic list views ═══════════════
+      function listView({ title, sub, endpoint, exportName, columns, rowHtml, onClick }) {
+        return async (main, state = { page: 1, q: "" }) => {
+          const p = await api(`${endpoint}?page=${state.page}&q=${encodeURIComponent(state.q)}`);
+          main.innerHTML = `<div class="view"><h1>${title}</h1><p class="sub">${sub}</p>
+            <div class="toolbar"><input type="text" id="q" placeholder="Buscar…" value="${esc(state.q)}" /><button class="btn-ghost" id="search">Buscar</button>
+            ${exportName ? `<a class="btn-ghost" style="text-decoration:none" href="/api/admin/export/${exportName}.csv?token=${getToken()}">Exportar CSV</a>` : ""}</div>
+            <div class="panel" style="padding:0;overflow:auto"><table><thead><tr>${columns.map((c) => `<th>${c}</th>`).join("")}</tr></thead><tbody>${p.rows.map(rowHtml).join("") || `<tr><td colspan="${columns.length}" style="color:var(--muted)">Sin registros todavía</td></tr>`}</tbody></table></div>
+            ${pagerHtml(p)}</div>`;
+          const rerun = (s) => views[location.hash.replace("#", "")](main, s);
+          $("#search").onclick = () => rerun({ page: 1, q: $("#q").value });
+          $("#q").onkeydown = (e) => { if (e.key === "Enter") rerun({ page: 1, q: $("#q").value }); };
+          $$("[data-page]").forEach((b) => (b.onclick = () => rerun({ ...state, page: +b.dataset.page })));
+          if (onClick) main.onclick = (e) => onClick(e, () => rerun(state));
+        };
       }
 
-      function updateLangTabs() {
-        langTabs.querySelectorAll("button").forEach((b) => {
-          b.classList.toggle("is-active", b.dataset.lang === currentLang);
-        });
-      }
-
-      langTabs.addEventListener("click", (e) => {
-        const btn = e.target.closest("button[data-lang]");
-        if (!btn) return;
-        const lang = btn.dataset.lang;
-        if (lang === currentLang) return;
-        if (!serverTexts[lang] || !Object.keys(serverTexts[lang]).length) {
-          loadLang(lang);
-        } else {
-          currentLang = lang;
-          updateLangTabs();
-          renderSections();
-          refreshIframe();
-          updateDirty();
-        }
+      views.scans = listView({
+        title: "Escaneos", sub: "Cada URL analizada por los usuarios, con IP, origen y resultado.", endpoint: "/api/admin/scans", exportName: "scans",
+        columns: ["Fecha", "URL", "Score", "Crít.", "Avisos", "OK", "ms", "IP", "Referrer", ""],
+        rowHtml: (s) => `<tr><td class="mono">${fmt(s.created_at)}</td><td><a href="${esc(s.url)}" target="_blank" rel="noopener" class="truncate">${esc(s.url)}</a></td><td><span class="pill pill--${s.score}">${s.score}</span></td><td>${s.critical_count}</td><td>${s.warning_count}</td><td>${s.passed_count}</td><td class="mono">${s.duration_ms ?? ""}</td><td class="mono">${esc(s.ip || "")}</td><td class="mono truncate" style="max-width:160px">${esc(s.referrer || "")}</td><td><button class="btn-ghost btn-sm" data-scan="${s.id}">Ver</button></td></tr>`,
+        onClick: async (e) => {
+          const b = e.target.closest("[data-scan]"); if (!b) return;
+          const s = await api(`/api/admin/scans/${b.dataset.scan}`);
+          const tr = b.closest("tr"); const next = tr.nextElementSibling;
+          if (next && next.classList.contains("detail")) { next.remove(); return; }
+          const row = document.createElement("tr"); row.className = "detail";
+          row.innerHTML = `<td colspan="10"><ul class="list">${s.results.map((r) => `<li><span>${r.severity === "critical" ? "🔴" : r.severity === "warning" ? "🟡" : "🟢"} <b>${esc(r.name)}</b> — ${esc(r.description)}${r.recommendation ? `<br><small style="color:var(--cyan)">💡 ${esc(r.recommendation)}</small>` : ""}</span><span>${r.free ? "free" : "premium"}</span></li>`).join("")}</ul><div class="mono" style="color:var(--muted);margin-top:8px">UA: ${esc(s.user_agent || "")}</div></td>`;
+          tr.after(row);
+        },
       });
 
-      function refreshIframe() {
-        const src = `/?admin=1&lang=${currentLang}&t=${Date.now()}`;
-        previewFrame.src = src;
-      }
+      views.leads = listView({
+        title: "Leads", sub: "Usuarios que pidieron el informe por email. Se guardan aunque falle el envío.", endpoint: "/api/admin/leads", exportName: "leads",
+        columns: ["Fecha", "Nombre", "Email", "Web escaneada", "Score", "Email", "Pagado", "IP", ""],
+        rowHtml: (l) => `<tr><td class="mono">${fmt(l.created_at)}</td><td>${esc(l.name)}</td><td><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></td><td class="truncate">${esc(l.scan_url || "")}</td><td>${l.scan_score ? `<span class="pill pill--${l.scan_score}">${l.scan_score}</span>` : ""}</td><td>${l.email_sent ? '<span class="pill pill--ok">enviado</span>' : `<span class="pill pill--err" title="${esc(l.email_error || "")}">no enviado</span>`}</td><td>${l.paid ? `<span class="pill pill--ok">sí</span>` : `<button class="btn-ghost btn-sm" data-paid="${l.token}">marcar pagado</button>`}</td><td class="mono">${esc(l.ip || "")}</td><td><a class="btn-ghost btn-sm" style="text-decoration:none" target="_blank" href="/payment.html?token=${l.token}">informe ↗</a></td></tr>`,
+        onClick: async (e, rerun) => { const b = e.target.closest("[data-paid]"); if (!b) return; if (!confirm("¿Marcar como pagado y desbloquear informe?")) return; await api(`/api/admin/leads/${b.dataset.paid}/paid`, { method: "POST" }); rerun(); },
+      });
 
-      function renderSections() {
-        sectionsRoot.innerHTML = "";
-        const keys = Object.keys(serverTexts[currentLang]).sort();
-        const filter = searchInput.value.trim().toLowerCase();
+      views.contacts = listView({
+        title: "Contactos", sub: "Mensajes del formulario de contacto.", endpoint: "/api/admin/contacts", exportName: "contacts",
+        columns: ["Fecha", "Nombre", "Email", "Asunto", "Mensaje", "IP", ""],
+        rowHtml: (c) => `<tr style="${c.read ? "" : "font-weight:600"}"><td class="mono">${fmt(c.created_at)}</td><td>${esc(c.name)}</td><td><a href="mailto:${esc(c.email)}?subject=Re: ${encodeURIComponent(c.subject || "")}">${esc(c.email)}</a></td><td>${esc(c.subject || "")}</td><td style="white-space:pre-wrap;max-width:420px;font-weight:400">${esc(c.message)}</td><td class="mono">${esc(c.ip || "")}</td><td>${c.read ? "" : `<button class="btn-ghost btn-sm" data-read="${c.id}">marcar leído</button>`}</td></tr>`,
+        onClick: async (e, rerun) => { const b = e.target.closest("[data-read]"); if (!b) return; await api(`/api/admin/contacts/${b.dataset.read}/read`, { method: "POST" }); rerun(); },
+      });
 
-        for (const section of SECTIONS) {
-          const sectionKeys = keys.filter((k) => k.startsWith(section.prefix));
-          if (sectionKeys.length === 0) continue;
+      views.events = async (main, state = { page: 1, type: "" }) => {
+        const p = await api(`/api/admin/events?page=${state.page}&type=${encodeURIComponent(state.type)}`);
+        const types = ["", "pageview", "botview", "scan", "scan_error", "lead", "email_error", "contact", "report_view", "payment", "admin_login", "admin_login_failed", "article_generated", "article_autopost"];
+        main.innerHTML = `<div class="view"><h1>Eventos</h1><p class="sub">Registro completo de actividad: visitas, escaneos, leads, errores, accesos.</p>
+          <div class="toolbar"><select id="type" style="max-width:220px">${types.map((t) => `<option value="${t}" ${t === state.type ? "selected" : ""}>${t || "Todos los tipos"}</option>`).join("")}</select>
+          <a class="btn-ghost" style="text-decoration:none" href="/api/admin/export/events.csv?token=${getToken()}">Exportar CSV</a></div>
+          <div class="panel" style="padding:0;overflow:auto"><table><thead><tr><th>ID</th><th>Fecha</th><th>Tipo</th><th>Ruta</th><th>IP</th><th>País</th><th>Lang</th><th>Referrer</th><th>Meta</th><th>UA</th></tr></thead><tbody>
+          ${p.rows.map((e) => `<tr><td class="mono">${e.id}</td><td class="mono">${fmt(e.created_at)}</td><td>${esc(e.type)}</td><td class="mono truncate" style="max-width:200px">${esc(e.path || "")}</td><td class="mono">${esc(e.ip || "")}</td><td>${esc(e.country || "")}</td><td>${esc(e.lang || "")}</td><td class="mono truncate" style="max-width:160px">${esc(e.referrer || "")}</td><td class="mono truncate" style="max-width:240px" title="${esc(e.meta_json || "")}">${esc(e.meta_json || "")}</td><td class="mono truncate" style="max-width:200px" title="${esc(e.user_agent || "")}">${esc(e.user_agent || "")}</td></tr>`).join("")}
+          </tbody></table></div>${pagerHtml(p)}</div>`;
+        $("#type").onchange = () => views.events(main, { page: 1, type: $("#type").value });
+        $$("[data-page]").forEach((b) => (b.onclick = () => views.events(main, { ...state, page: +b.dataset.page })));
+      };
 
-          const filtered = filter
-            ? sectionKeys.filter(
-                (k) =>
-                  k.toLowerCase().includes(filter) ||
-                  currentValue(k).toLowerCase().includes(filter),
-              )
-            : sectionKeys;
-          if (filtered.length === 0) continue;
-
-          const sec = document.createElement("div");
-          sec.className = "section";
-          sec.innerHTML = `
-            <div class="section__title">
-              <h3>${section.title}</h3>
-              <small>${section.prefix}*</small>
+      // ═══════════════ Articles ═══════════════
+      views.articles = async (main) => {
+        const [{ articles }, { topics }, settings] = await Promise.all([api("/api/admin/articles"), api("/api/admin/topics"), api("/api/admin/settings")]);
+        const prov = settings.provider;
+        main.innerHTML = `<div class="view"><h1>Artículos</h1><p class="sub">Blog SEO/GEO en <a href="/blog" target="_blank">/blog</a>. Motor IA: <b>${esc(prov.name)}:${esc(prov.model)}</b> ${prov.available ? '<span class="pill pill--ok">disponible</span>' : `<span class="pill pill--err">no disponible${prov.error ? ": " + esc(prov.error) : ""}</span>`}</p>
+          <div class="two">
+            <div class="panel"><h3>Generar artículo con IA</h3>
+              <label class="lbl">Tema</label><input type="text" id="gen-topic" placeholder="Ej: Cómo configurar Content Security Policy en nginx paso a paso" />
+              <label class="lbl">Palabras clave (opcional)</label><input type="text" id="gen-kw" placeholder="csp nginx, content security policy, cabeceras seguridad" />
+              <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap">
+                <select id="gen-lang" style="max-width:120px"><option value="es">Español</option><option value="en">English</option></select>
+                <label style="font-size:12px;color:var(--muted)"><input type="checkbox" id="gen-publish" /> Publicar directamente</label>
+                <button class="btn-primary" id="gen-btn">✨ Generar</button>
+                <span id="gen-status" class="status"></span>
+              </div>
+              <p class="status" style="margin-top:10px">Con Ollama local la generación puede tardar 2-6 minutos. No cierres la pestaña.</p>
             </div>
-            <div class="section__fields"></div>
-          `;
-          const fieldsEl = sec.querySelector(".section__fields");
-          sec
-            .querySelector(".section__title")
-            .addEventListener("click", () =>
-              sec.classList.toggle("is-collapsed"),
-            );
+            <div class="panel"><h3>Cola de temas (autopublicación)</h3>
+              <textarea id="topics-input" rows="4" placeholder="Un tema por línea…"></textarea>
+              <div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap">
+                <select id="topics-lang" style="max-width:120px"><option value="es">Español</option><option value="en">English</option></select>
+                <button class="btn-ghost" id="topics-add">Añadir a la cola</button>
+                <button class="btn-ghost" id="topics-suggest">Sugerir 10 temas</button>
+                <button class="btn-ghost" id="topics-run">Procesar siguiente ahora</button>
+              </div>
+              <p class="status" style="margin-top:8px">Autopost: <b>${settings.settings.autopost_enabled === "1" ? "activado" : "desactivado"}</b> cada ${esc(settings.settings.autopost_interval_hours || "24")} h (cambiar en Ajustes). Pendientes: ${topics.filter((t) => t.status === "pending").length}</p>
+              <ul class="list" style="max-height:180px;overflow:auto">${topics.map((t) => `<li><span class="truncate">${t.status === "done" ? "✅" : t.status === "error" ? "❌" : "⏳"} ${esc(t.topic)} <small>(${t.lang})</small>${t.error ? `<br><small style="color:var(--error)">${esc(t.error)}</small>` : ""}</span><span><button class="btn-ghost btn-sm" data-del-topic="${t.id}">✕</button></span></li>`).join("") || "<li>Cola vacía</li>"}</ul>
+            </div>
+          </div>
+          <div class="panel" style="padding:0;overflow:auto"><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px"><h3 style="margin:0">Todos los artículos (${articles.length})</h3><button class="btn-ghost" id="new-article">+ Nuevo manual</button></div>
+          <table><thead><tr><th>Título</th><th>Slug</th><th>Idioma</th><th>Estado</th><th>Origen</th><th>Vistas</th><th>Publicado</th><th></th></tr></thead><tbody>
+          ${articles.map((a) => `<tr><td>${esc(a.title)}</td><td class="mono">${esc(a.slug)}</td><td>${a.lang}</td><td><span class="pill pill--${a.status}">${a.status}</span></td><td class="mono" title="${esc(a.model || "")}">${esc(a.source)}</td><td>${a.views}</td><td class="mono">${fmt(a.published_at)}</td><td style="white-space:nowrap"><button class="btn-ghost btn-sm" data-edit="${a.id}">Editar</button> <a class="btn-ghost btn-sm" style="text-decoration:none" target="_blank" href="${a.status === "published" ? `/blog/${a.slug}` : `/api/admin/articles/${a.id}/preview?token=${getToken()}`}">Ver ↗</a> <button class="btn-danger btn-sm" data-del="${a.id}">✕</button></td></tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted)">Aún no hay artículos. Genera el primero arriba.</td></tr>`}
+          </tbody></table></div></div>`;
 
-          for (const key of filtered) {
-            const value = currentValue(key);
-            const isLong = value.length > 60;
-            const field = document.createElement("div");
-            field.className = "field";
-            field.dataset.key = key;
-            if (key in localEdits[currentLang]) field.classList.add("is-dirty");
+        $("#gen-btn").onclick = async () => {
+          const topic = $("#gen-topic").value.trim(); if (!topic) return $("#gen-topic").focus();
+          const btn = $("#gen-btn"), st = $("#gen-status"); btn.disabled = true; st.innerHTML = '<span class="spinner"></span> Generando… (puede tardar varios minutos)'; st.className = "status";
+          const t0 = Date.now(); const tick = setInterval(() => { st.innerHTML = `<span class="spinner"></span> Generando… ${Math.round((Date.now() - t0) / 1000)}s`; }, 1000);
+          try {
+            const r = await api("/api/admin/articles/generate", { method: "POST", body: { topic, lang: $("#gen-lang").value, keywords: $("#gen-kw").value, publish: $("#gen-publish").checked } });
+            clearInterval(tick); st.textContent = `✅ Generado en ${Math.round(r.generation_ms / 1000)}s con ${r.model}`; st.className = "status status--success";
+            openEditor(main, r.article.id);
+          } catch (err) { clearInterval(tick); st.textContent = `❌ ${err.message}`; st.className = "status status--error"; btn.disabled = false; }
+        };
+        $("#topics-add").onclick = async () => { const v = $("#topics-input").value.trim(); if (!v) return; await api("/api/admin/topics", { method: "POST", body: { topics: v, lang: $("#topics-lang").value } }); views.articles(main); };
+        $("#topics-suggest").onclick = () => {
+          const es = $("#topics-lang").value === "es";
+          $("#topics-input").value = (es ? [
+            "Qué son las cabeceras de seguridad HTTP y cómo configurarlas en nginx y Apache",
+            "Content Security Policy (CSP): guía práctica para evitar XSS sin romper tu web",
+            "HSTS explicado: cómo forzar HTTPS y entrar en la preload list",
+            "Cookies seguras: Secure, HttpOnly y SameSite con ejemplos reales",
+            "CORS mal configurado: riesgos y cómo corregirlo paso a paso",
+            "Archivos sensibles expuestos (.env, .git, wp-config.php): cómo detectarlos y bloquearlos",
+            "Source maps en producción: por qué exponen tu código y cómo desactivarlos",
+            "Open redirect: qué es, por qué se usa en phishing y cómo evitarlo",
+            "Checklist de seguridad web para tiendas WooCommerce y Shopify",
+            "Cómo auditar la seguridad de tu web en 10 minutos (gratis)",
+          ] : [
+            "HTTP security headers explained: how to configure them in nginx and Apache",
+            "Content Security Policy (CSP): a practical guide to stop XSS without breaking your site",
+            "HSTS explained: forcing HTTPS and joining the preload list",
+            "Secure cookies: Secure, HttpOnly and SameSite with real examples",
+            "Misconfigured CORS: risks and how to fix it step by step",
+            "Exposed sensitive files (.env, .git, wp-config.php): detect and block them",
+            "Source maps in production: why they leak your code and how to disable them",
+            "Open redirects: what they are, why phishing loves them and how to prevent them",
+            "Web security checklist for WooCommerce and Shopify stores",
+            "How to audit your website security in 10 minutes (for free)",
+          ]).join("\n");
+        };
+        $("#topics-run").onclick = async () => { const b = $("#topics-run"); b.disabled = true; b.textContent = "Procesando…"; try { await api("/api/admin/topics/run-now", { method: "POST" }); setStatus("✅ Artículo publicado desde la cola", "status--success"); } catch (err) { setStatus(`❌ ${err.message}`, "status--error"); } views.articles(main); };
+        $("#new-article").onclick = () => openEditor(main, null);
+        main.addEventListener("click", async (e) => {
+          const ed = e.target.closest("[data-edit]"); if (ed) return openEditor(main, ed.dataset.edit);
+          const del = e.target.closest("[data-del]"); if (del) { if (!confirm("¿Eliminar artículo definitivamente?")) return; await api(`/api/admin/articles/${del.dataset.del}`, { method: "DELETE" }); return views.articles(main); }
+          const dt = e.target.closest("[data-del-topic]"); if (dt) { await api(`/api/admin/topics/${dt.dataset.delTopic}`, { method: "DELETE" }); return views.articles(main); }
+        });
+      };
 
-            field.innerHTML = `
-              <label>${key}</label>
-              ${
-                isLong
-                  ? `<textarea data-key="${key}" rows="3"></textarea>`
-                  : `<input type="text" data-key="${key}" />`
-              }
-            `;
-            const control = field.querySelector("[data-key]");
-            control.value = value;
-            control.addEventListener("focus", () => {
-              document
-                .querySelectorAll(".field.is-focused")
-                .forEach((f) => f.classList.remove("is-focused"));
-              field.classList.add("is-focused");
-              postToIframe({ type: "securitia:focusText", key });
-            });
-            control.addEventListener("input", () => {
-              setLocal(key, control.value);
-              postToIframe({
-                type: "securitia:setText",
-                key,
-                value: control.value,
-              });
-            });
-
-            fieldsEl.appendChild(field);
-          }
-
-          sectionsRoot.appendChild(sec);
-        }
+      async function openEditor(main, id) {
+        const a = id ? await api(`/api/admin/articles/${id}`) : { title: "", slug: "", lang: "es", meta_description: "", excerpt: "", content_md: "", keywords: "", faq_json: "[]", cover_emoji: "🛡️", author: "Equipo Securitia", status: "draft" };
+        const faq = JSON.parse(a.faq_json || "[]");
+        main.innerHTML = `<div class="view"><div class="toolbar"><button class="btn-ghost" id="back">← Volver</button><h1 style="margin:0">${id ? "Editar artículo" : "Nuevo artículo"}</h1><span id="ed-status" class="status"></span></div>
+          <div class="editor">
+            <div>
+              <label class="lbl">Título</label><input type="text" id="f-title" value="${esc(a.title)}" />
+              <label class="lbl">Contenido (Markdown)</label><textarea id="f-md" class="md">${esc(a.content_md)}</textarea>
+              <label class="lbl">FAQ (JSON: [{"q":"","a":""}])</label><textarea id="f-faq" rows="4" class="mono">${esc(JSON.stringify(faq, null, 1))}</textarea>
+            </div>
+            <div>
+              <div class="panel">
+                <label class="lbl">Estado</label><select id="f-status"><option value="draft" ${a.status === "draft" ? "selected" : ""}>Borrador</option><option value="published" ${a.status === "published" ? "selected" : ""}>Publicado</option></select>
+                <label class="lbl">Idioma</label><select id="f-lang"><option value="es" ${a.lang === "es" ? "selected" : ""}>Español</option><option value="en" ${a.lang === "en" ? "selected" : ""}>English</option></select>
+                <label class="lbl">Slug (URL)</label><input type="text" id="f-slug" value="${esc(a.slug)}" class="mono" />
+                <label class="lbl">Meta descripción <span id="md-count"></span></label><textarea id="f-meta" rows="3">${esc(a.meta_description || "")}</textarea>
+                <label class="lbl">Extracto</label><textarea id="f-excerpt" rows="3">${esc(a.excerpt || "")}</textarea>
+                <label class="lbl">Keywords</label><input type="text" id="f-kw" value="${esc(a.keywords || "")}" />
+                <label class="lbl">Emoji portada</label><input type="text" id="f-emoji" value="${esc(a.cover_emoji || "🛡️")}" />
+                <label class="lbl">Autor</label><input type="text" id="f-author" value="${esc(a.author || "")}" />
+                <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+                  <button class="btn-primary" id="save">Guardar</button>
+                  ${id ? `<a class="btn-ghost" style="text-decoration:none" target="_blank" href="/api/admin/articles/${id}/preview?token=${getToken()}">Previsualizar ↗</a>` : ""}
+                </div>
+                ${a.model ? `<p class="status" style="margin-top:10px">Generado por ${esc(a.model)}</p>` : ""}
+              </div>
+            </div>
+          </div></div>`;
+        const cnt = () => { const n = $("#f-meta").value.length; $("#md-count").textContent = `(${n}/155)`; $("#md-count").style.color = n > 160 ? "var(--error)" : "var(--muted)"; }; cnt(); $("#f-meta").oninput = cnt;
+        $("#back").onclick = () => views.articles(main);
+        $("#save").onclick = async () => {
+          const st = $("#ed-status");
+          let faqParsed; try { faqParsed = JSON.parse($("#f-faq").value || "[]"); } catch { st.textContent = "❌ FAQ no es JSON válido"; st.className = "status status--error"; return; }
+          const body = { title: $("#f-title").value, slug: $("#f-slug").value, lang: $("#f-lang").value, status: $("#f-status").value, meta_description: $("#f-meta").value, excerpt: $("#f-excerpt").value, keywords: $("#f-kw").value, cover_emoji: $("#f-emoji").value, author: $("#f-author").value, content_md: $("#f-md").value, faq: faqParsed };
+          try {
+            const saved = await api(id ? `/api/admin/articles/${id}` : "/api/admin/articles", { method: id ? "PUT" : "POST", body });
+            st.textContent = `✅ Guardado${saved.status === "published" ? ` · /blog/${saved.slug}` : ""}`; st.className = "status status--success";
+            if (!id) openEditor(main, saved.id);
+          } catch (err) { st.textContent = `❌ ${err.message}`; st.className = "status status--error"; }
+        };
       }
 
-      function setLocal(key, value) {
-        const saved = serverTexts[currentLang][key] || "";
-        if (value === saved) {
-          delete localEdits[currentLang][key];
-        } else {
-          localEdits[currentLang][key] = value;
-        }
-        const field = document.querySelector(`.field[data-key="${key}"]`);
-        if (field)
-          field.classList.toggle("is-dirty", key in localEdits[currentLang]);
-        updateDirty();
-      }
+      // ═══════════════ Settings ═══════════════
+      views.settings = async (main) => {
+        const d = await api("/api/admin/settings"); const s = d.settings;
+        main.innerHTML = `<div class="view"><h1>Ajustes</h1><p class="sub">Configuración del generador y del sitio. Las claves API (Resend, Anthropic, OpenAI) se configuran en el fichero <span class="mono">.env</span> del servidor.</p>
+          <div class="two"><div class="panel"><h3>Autopublicación</h3>
+            <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="s-auto" ${s.autopost_enabled === "1" ? "checked" : ""}/> Publicar automáticamente el siguiente tema de la cola</label>
+            <label class="lbl">Intervalo (horas)</label><input type="number" id="s-int" min="1" value="${esc(s.autopost_interval_hours || "24")}" />
+            <label class="lbl">Audiencia / enfoque de los artículos</label><textarea id="s-aud" rows="3" placeholder="Ej: pymes y ecommerce en España, sin conocimientos técnicos avanzados">${esc(s.article_audience || "")}</textarea>
+            <button class="btn-primary" id="s-save" style="margin-top:12px">Guardar</button> <span id="s-status" class="status"></span>
+          </div>
+          <div class="panel"><h3>Motor IA activo</h3>
+            <p><b>${esc(d.provider.name)}</b> · modelo <span class="mono">${esc(d.provider.model)}</span> · ${d.provider.available ? '<span class="pill pill--ok">disponible</span>' : '<span class="pill pill--err">no disponible</span>'}</p>
+            ${d.provider.models ? `<p class="status">Modelos Ollama instalados: ${d.provider.models.map(esc).join(", ")}</p>` : ""}
+            <p class="status">Prioridad: ANTHROPIC_API_KEY → OPENAI_API_KEY → Ollama local. Cambia las variables en .env y reinicia (<span class="mono">pm2 restart securitia</span>).</p>
+            <h3 style="margin-top:20px">SEO / GEO</h3>
+            <ul class="list"><li><a href="/sitemap.xml" target="_blank">/sitemap.xml</a></li><li><a href="/robots.txt" target="_blank">/robots.txt</a></li><li><a href="/llms.txt" target="_blank">/llms.txt</a></li><li><a href="/blog/rss.xml" target="_blank">/blog/rss.xml</a></li></ul>
+          </div></div></div>`;
+        $("#s-save").onclick = async () => { try { await api("/api/admin/settings", { method: "PUT", body: { autopost_enabled: $("#s-auto").checked ? "1" : "0", autopost_interval_hours: $("#s-int").value, article_audience: $("#s-aud").value } }); $("#s-status").textContent = "✅ Guardado"; $("#s-status").className = "status status--success"; } catch (err) { $("#s-status").textContent = `❌ ${err.message}`; $("#s-status").className = "status status--error"; } };
+      };
 
-      function updateDirty() {
-        const total =
-          Object.keys(localEdits.es).length + Object.keys(localEdits.en).length;
-        if (total === 0) {
-          dirtyCount.textContent = "";
-          dirtyCount.className = "status";
-        } else {
-          dirtyCount.textContent = `${total} cambio${total > 1 ? "s" : ""} sin guardar`;
-          dirtyCount.className = "status status--warn";
-        }
-      }
+      // ═══════════════ Texts (visual editor, iframe) ═══════════════
+      const SECTIONS = [
+        { id: "nav", title: "Navegación", prefix: "nav." }, { id: "hero", title: "Hero (sección principal)", prefix: "hero." },
+        { id: "how", title: "Cómo funciona", prefix: "how." }, { id: "vulns", title: "Vulnerabilidades", prefix: "vulns." },
+        { id: "pricing", title: "Precios", prefix: "pricing." }, { id: "faq", title: "Preguntas frecuentes", prefix: "faq." },
+        { id: "results", title: "CTA de resultados", prefix: "results." }, { id: "footer", title: "Footer", prefix: "footer." },
+      ];
+      views.texts = async (main) => {
+        main.innerHTML = `<div class="view"><div class="toolbar"><h1 style="margin:0">Textos web</h1>
+            <div class="lang-tabs" id="lang-tabs"><button type="button" data-lang="es" class="is-active">ES</button><button type="button" data-lang="en">EN</button></div>
+            <span id="save-status" class="status"></span><span id="dirty-count" class="status"></span>
+            <button id="reload-btn" class="btn-ghost">Recargar</button><button id="save-btn" class="btn-primary">Guardar cambios</button></div>
+          <div class="texts"><div class="preview"><iframe id="preview-frame" title="Preview"></iframe><div class="preview__hint">Clic en un texto para seleccionarlo · Doble clic para editarlo inline</div></div>
+          <aside class="side"><div class="side__search"><input id="search-input" type="text" placeholder="Buscar clave o contenido…" /></div><div class="side__body" id="sections"></div></aside></div></div>`;
 
-      function postToIframe(msg) {
-        if (!previewFrame.contentWindow) return;
-        previewFrame.contentWindow.postMessage(msg, "*");
-      }
-
-      // Messages from the landing iframe
-      window.addEventListener("message", (event) => {
-        const msg = event.data;
-        if (!msg || typeof msg !== "object") return;
-
-        if (msg.type === "securitia:ready") {
-          // Push all current local edits so the iframe reflects unsaved state.
-          for (const [key, value] of Object.entries(localEdits[currentLang])) {
-            postToIframe({ type: "securitia:setText", key, value });
-          }
-        } else if (
-          msg.type === "securitia:edit" ||
-          msg.type === "securitia:input"
-        ) {
-          if (msg.lang && msg.lang !== currentLang) return;
-          const control = document.querySelector(
-            `.field[data-key="${msg.key}"] [data-key]`,
-          );
-          if (control) control.value = msg.value;
-          setLocal(msg.key, msg.value);
-        } else if (msg.type === "securitia:select") {
-          const field = document.querySelector(`.field[data-key="${msg.key}"]`);
-          if (!field) return;
-          document
-            .querySelectorAll(".field.is-focused")
-            .forEach((f) => f.classList.remove("is-focused"));
-          field.classList.add("is-focused");
-          field.scrollIntoView({ behavior: "smooth", block: "center" });
-          const control = field.querySelector("[data-key]");
-          if (control) control.focus();
-        }
-      });
-
-      searchInput.addEventListener("input", renderSections);
-
-      saveBtn.addEventListener("click", async () => {
-        const langsToSave = ["es", "en"].filter(
-          (l) => Object.keys(localEdits[l]).length > 0,
-        );
-        if (langsToSave.length === 0) {
-          saveStatus.textContent = "Nada que guardar";
-          saveStatus.className = "status";
-          return;
-        }
-
-        saveBtn.disabled = true;
-        saveStatus.textContent = "Guardando…";
-        saveStatus.className = "status";
-
-        try {
-          for (const lang of langsToSave) {
-            const res = await fetch("/api/admin/texts", {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${getToken()}`,
-              },
-              body: JSON.stringify({ lang, texts: localEdits[lang] }),
-            });
-            if (res.status === 401) {
-              setToken(null);
-              showLogin();
-              loginError.textContent = "Sesión expirada, vuelve a entrar.";
-              return;
+        const saveBtn = $("#save-btn"), reloadBtn = $("#reload-btn"), saveStatus = $("#save-status"), sectionsRoot = $("#sections"), previewFrame = $("#preview-frame"), langTabs = $("#lang-tabs"), searchInput = $("#search-input"), dirtyCount = $("#dirty-count");
+        let currentLang = "es"; const serverTexts = { es: {}, en: {} }; const localEdits = { es: {}, en: {} };
+        const currentValue = (key) => (key in localEdits[currentLang] ? localEdits[currentLang][key] : serverTexts[currentLang][key] || "");
+        async function loadLang(lang) { currentLang = lang; updateLangTabs(); saveStatus.textContent = "Cargando…"; const payload = await (await fetch(`/api/texts?lang=${lang}`)).json(); serverTexts[lang] = payload.texts || payload; renderSections(); refreshIframe(); saveStatus.textContent = ""; updateDirty(); }
+        function updateLangTabs() { $$("button", langTabs).forEach((b) => b.classList.toggle("is-active", b.dataset.lang === currentLang)); }
+        langTabs.addEventListener("click", (e) => { const btn = e.target.closest("button[data-lang]"); if (!btn || btn.dataset.lang === currentLang) return; const lang = btn.dataset.lang; if (!Object.keys(serverTexts[lang]).length) loadLang(lang); else { currentLang = lang; updateLangTabs(); renderSections(); refreshIframe(); updateDirty(); } });
+        function refreshIframe() { previewFrame.src = `/?admin=1&lang=${currentLang}&t=${Date.now()}`; }
+        function renderSections() {
+          sectionsRoot.innerHTML = ""; const keys = Object.keys(serverTexts[currentLang]).sort(); const filter = searchInput.value.trim().toLowerCase();
+          for (const section of SECTIONS) {
+            const sectionKeys = keys.filter((k) => k.startsWith(section.prefix)); if (!sectionKeys.length) continue;
+            const filtered = filter ? sectionKeys.filter((k) => k.toLowerCase().includes(filter) || currentValue(k).toLowerCase().includes(filter)) : sectionKeys; if (!filtered.length) continue;
+            const sec = document.createElement("div"); sec.className = "section";
+            sec.innerHTML = `<div class="section__title"><h3>${section.title}</h3><small>${section.prefix}*</small></div><div class="section__fields"></div>`;
+            const fieldsEl = sec.querySelector(".section__fields"); sec.querySelector(".section__title").addEventListener("click", () => sec.classList.toggle("is-collapsed"));
+            for (const key of filtered) {
+              const value = currentValue(key); const field = document.createElement("div"); field.className = "field"; field.dataset.key = key; if (key in localEdits[currentLang]) field.classList.add("is-dirty");
+              field.innerHTML = `<label>${key}</label>${value.length > 60 ? `<textarea data-key="${key}" rows="3"></textarea>` : `<input type="text" data-key="${key}" />`}`;
+              const control = field.querySelector("[data-key]"); control.value = value;
+              control.addEventListener("focus", () => { $$(".field.is-focused").forEach((f) => f.classList.remove("is-focused")); field.classList.add("is-focused"); postToIframe({ type: "securitia:focusText", key }); });
+              control.addEventListener("input", () => { setLocal(key, control.value); postToIframe({ type: "securitia:setText", key, value: control.value }); });
+              fieldsEl.appendChild(field);
             }
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Error al guardar");
-            serverTexts[lang] = data.texts;
-            localEdits[lang] = {};
+            sectionsRoot.appendChild(sec);
           }
-          renderSections();
-          updateDirty();
-          saveStatus.textContent = "✅ Cambios guardados";
-          saveStatus.className = "status status--success";
-        } catch (err) {
-          saveStatus.textContent = `❌ ${err.message}`;
-          saveStatus.className = "status status--error";
-        } finally {
-          saveBtn.disabled = false;
         }
-      });
+        function setLocal(key, value) { const saved = serverTexts[currentLang][key] || ""; if (value === saved) delete localEdits[currentLang][key]; else localEdits[currentLang][key] = value; const field = $(`.field[data-key="${key}"]`); if (field) field.classList.toggle("is-dirty", key in localEdits[currentLang]); updateDirty(); }
+        function updateDirty() { const total = Object.keys(localEdits.es).length + Object.keys(localEdits.en).length; dirtyCount.textContent = total ? `${total} cambio${total > 1 ? "s" : ""} sin guardar` : ""; dirtyCount.className = total ? "status status--warn" : "status"; }
+        function postToIframe(msg) { previewFrame.contentWindow && previewFrame.contentWindow.postMessage(msg, "*"); }
+        const onMsg = (event) => {
+          const msg = event.data; if (!msg || typeof msg !== "object") return;
+          if (msg.type === "securitia:ready") { for (const [key, value] of Object.entries(localEdits[currentLang])) postToIframe({ type: "securitia:setText", key, value }); }
+          else if (msg.type === "securitia:edit" || msg.type === "securitia:input") { if (msg.lang && msg.lang !== currentLang) return; const control = $(`.field[data-key="${msg.key}"] [data-key]`); if (control) control.value = msg.value; setLocal(msg.key, msg.value); }
+          else if (msg.type === "securitia:select") { const field = $(`.field[data-key="${msg.key}"]`); if (!field) return; $$(".field.is-focused").forEach((f) => f.classList.remove("is-focused")); field.classList.add("is-focused"); field.scrollIntoView({ behavior: "smooth", block: "center" }); const c = field.querySelector("[data-key]"); if (c) c.focus(); }
+        };
+        window.addEventListener("message", onMsg);
+        searchInput.addEventListener("input", renderSections);
+        saveBtn.addEventListener("click", async () => {
+          const langsToSave = ["es", "en"].filter((l) => Object.keys(localEdits[l]).length); if (!langsToSave.length) { saveStatus.textContent = "Nada que guardar"; return; }
+          saveBtn.disabled = true; saveStatus.textContent = "Guardando…"; saveStatus.className = "status";
+          try { for (const lang of langsToSave) { const data = await api("/api/admin/texts", { method: "PUT", body: { lang, texts: localEdits[lang] } }); serverTexts[lang] = data.texts; localEdits[lang] = {}; } renderSections(); updateDirty(); saveStatus.textContent = "✅ Cambios guardados"; saveStatus.className = "status status--success"; }
+          catch (err) { saveStatus.textContent = `❌ ${err.message}`; saveStatus.className = "status status--error"; } finally { saveBtn.disabled = false; }
+        });
+        reloadBtn.addEventListener("click", () => { const dirty = Object.keys(localEdits.es).length + Object.keys(localEdits.en).length; if (dirty && !confirm("Tienes cambios sin guardar. ¿Descartarlos?")) return; localEdits.es = {}; localEdits.en = {}; loadLang(currentLang); });
+        loadLang("es");
+      };
 
-      reloadBtn.addEventListener("click", () => {
-        const hasDirty =
-          Object.keys(localEdits.es).length +
-            Object.keys(localEdits.en).length >
-          0;
-        if (
-          hasDirty &&
-          !confirm("Tienes cambios sin guardar. ¿Descartarlos?")
-        ) {
-          return;
-        }
-        localEdits.es = {};
-        localEdits.en = {};
-        loadLang(currentLang);
-      });
-
-      // Warn before leaving with unsaved edits
-      window.addEventListener("beforeunload", (e) => {
-        const dirty =
-          Object.keys(localEdits.es).length + Object.keys(localEdits.en).length;
-        if (dirty > 0) {
-          e.preventDefault();
-          e.returnValue = "";
-        }
-      });
-
-      // Boot
-      if (getToken()) showEditor();
-      else showLogin();
+      // ═══════════════ Boot ═══════════════
+      (async () => {
+        if (getToken()) { try { await api("/api/admin/me"); return showApp(); } catch {} }
+        showLogin();
+      })();
     </script>
   </body>
 </html>

@@ -122,7 +122,7 @@ export async function sendReportEmail({ to, name, scanResult, token, paymentUrl 
     .replace(/{{DATE}}/g, new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }));
 
   const { data, error } = await getResend().emails.send({
-    from: 'Securitia <onboarding@resend.dev>',
+    from: process.env.RESEND_FROM || 'Securitia <onboarding@resend.dev>',
     to: [to],
     subject: `🛡️ Securitia — Informe de Seguridad para ${scanResult.url}`,
     html: template,
@@ -134,5 +134,34 @@ export async function sendReportEmail({ to, name, scanResult, token, paymentUrl 
   }
 
   console.log(`✅ Email sent to ${to} — ID: ${data.id}`);
+  return data;
+}
+
+
+/**
+ * Notify the site owner about a new contact-form message.
+ * Silently no-ops when RESEND_API_KEY or CONTACT_NOTIFY_TO are missing
+ * (the message is already stored in the database).
+ */
+export async function sendContactNotification({ name, email, subject, message }) {
+  const to = process.env.CONTACT_NOTIFY_TO;
+  if (!to || !process.env.RESEND_API_KEY) return null;
+  const html = `
+    <div style="font-family: Inter, system-ui, sans-serif; max-width: 600px;">
+      <h2 style="margin:0 0 12px;">📬 Nuevo mensaje de contacto — Securitia</h2>
+      <p><strong>Nombre:</strong> ${escapeHtml(name)}<br/>
+         <strong>Email:</strong> ${escapeHtml(email)}<br/>
+         <strong>Asunto:</strong> ${escapeHtml(subject)}</p>
+      <div style="white-space: pre-wrap; background:#f5f5f5; padding:12px; border-radius:8px;">${escapeHtml(message)}</div>
+      <p style="color:#888; font-size:12px;">Gestión: ${escapeHtml(process.env.BASE_URL || '')}/admin</p>
+    </div>`;
+  const { data, error } = await getResend().emails.send({
+    from: process.env.RESEND_FROM || 'Securitia <onboarding@resend.dev>',
+    to: [to],
+    reply_to: email,
+    subject: `[Securitia] Contacto: ${subject}`,
+    html,
+  });
+  if (error) throw new Error(error.message);
   return data;
 }

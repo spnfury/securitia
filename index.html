@@ -8,6 +8,38 @@
       name="description"
       content="Detecta vulnerabilidades en cualquier sitio web en segundos. Escaneo real con 15+ verificaciones de seguridad. Protege tu web ahora."
     />
+    <link rel="canonical" href="https://securitia.es/" />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
+    <link rel="alternate" hreflang="es" href="https://securitia.es/" />
+    <link rel="alternate" hreflang="en" href="https://securitia.es/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://securitia.es/" />
+    <link rel="alternate" type="application/rss+xml" title="Securitia Blog" href="https://securitia.es/blog/rss.xml" />
+    <meta property="og:site_name" content="Securitia" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:url" content="https://securitia.es/" />
+    <meta property="og:title" content="Securitia — Escáner de Vulnerabilidades Web" />
+    <meta property="og:description" content="Detecta vulnerabilidades en cualquier sitio web en segundos. Escaneo real con 15+ verificaciones de seguridad. Gratis." />
+    <meta property="og:image" content="https://securitia.es/og-image.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Securitia — Escáner de Vulnerabilidades Web" />
+    <meta name="twitter:description" content="Detecta vulnerabilidades en cualquier sitio web en segundos. Escaneo real con 15+ verificaciones de seguridad. Gratis." />
+    <meta name="twitter:image" content="https://securitia.es/og-image.svg" />
+    <meta name="theme-color" content="#0a0a0f" />
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"Organization","@id":"https://securitia.es/#org","name":"Securitia","url":"https://securitia.es/","logo":{"@type":"ImageObject","url":"https://securitia.es/icon.svg"},"description":"Escáner online de vulnerabilidades web con más de 15 verificaciones reales de seguridad.","email":"hola@securitia.es"},
+      {"@type":"WebSite","@id":"https://securitia.es/#website","url":"https://securitia.es/","name":"Securitia","inLanguage":"es","publisher":{"@id":"https://securitia.es/#org"}},
+      {"@type":"SoftwareApplication","name":"Securitia","applicationCategory":"SecurityApplication","operatingSystem":"Web","url":"https://securitia.es/","description":"Escáner de vulnerabilidades web: HTTPS, cabeceras de seguridad, CSP, cookies, CORS, archivos sensibles, source maps y redirecciones abiertas.","offers":[{"@type":"Offer","price":"0","priceCurrency":"EUR","name":"Escaneo gratuito"},{"@type":"Offer","price":"29","priceCurrency":"EUR","name":"Informe Premium"}],"featureList":"HTTPS & TLS, Security Headers, Content Security Policy, Cookie Security, CORS, Archivos sensibles, Source Maps, Open Redirects, HSTS, Referrer-Policy, Permissions-Policy, Mixed Content, Directory Listing"},
+      {"@type":"FAQPage","mainEntity":[
+        {"@type":"Question","name":"¿Qué es Securitia?","acceptedAnswer":{"@type":"Answer","text":"Securitia es un escáner de vulnerabilidades web online. Analiza cualquier URL pública con más de 15 verificaciones reales (HTTPS, cabeceras de seguridad, CSP, cookies, CORS, archivos sensibles, source maps, redirecciones abiertas) y genera un informe con recomendaciones concretas."}},
+        {"@type":"Question","name":"¿El escaneo es legal y seguro para mi web?","acceptedAnswer":{"@type":"Answer","text":"Sí. Securitia solo realiza peticiones HTTP de lectura, iguales a las de un navegador. No explota vulnerabilidades ni envía cargas maliciosas, por lo que no afecta al funcionamiento del sitio analizado."}},
+        {"@type":"Question","name":"¿Cuánto tarda un escaneo?","acceptedAnswer":{"@type":"Answer","text":"Normalmente entre 5 y 20 segundos, dependiendo de la velocidad de respuesta del sitio analizado."}},
+        {"@type":"Question","name":"¿Qué incluye el informe Premium?","acceptedAnswer":{"@type":"Answer","text":"El informe Premium desbloquea las 15+ verificaciones completas con descripción detallada, nivel de riesgo y recomendación de corrección para cada hallazgo, además del informe descargable."}},
+        {"@type":"Question","name":"¿Guardáis los datos de mi web?","acceptedAnswer":{"@type":"Answer","text":"Guardamos el resultado del escaneo para poder enviarte el informe y mejorar el servicio. No almacenamos contraseñas ni datos privados de tus usuarios; solo información pública devuelta por tu servidor."}}
+      ]}
+    ]}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,10 +48,7 @@
     />
     <link rel="stylesheet" href="/src/style.css" />
     <link rel="stylesheet" href="/src/animations.css" />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"
-    />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
   </head>
   <body>
     <!-- Animated Background -->
@@ -47,6 +76,7 @@
           <a href="#pricing" class="nav__link" data-text="nav.link.pricing"
             >Precios</a
           >
+          <a href="/blog" class="nav__link" data-text="nav.link.blog">Blog</a>
           <div class="nav__lang">
             <button
               type="button"
@@ -502,6 +532,38 @@
       </div>
     </section>
 
+    <!-- FAQ (GEO / featured snippets) -->
+    <section class="faq-section" id="faq">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-tag" data-text="faq.tag">Preguntas frecuentes</span>
+          <h2 class="section-title" data-text="faq.title">Todo lo que necesitas saber</h2>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary class="faq-item__q" data-text="faq.q1">¿Qué es Securitia?</summary>
+            <p class="faq-item__a" data-text="faq.a1">Securitia es un escáner de vulnerabilidades web online. Analiza cualquier URL pública con más de 15 verificaciones reales (HTTPS, cabeceras de seguridad, CSP, cookies, CORS, archivos sensibles, source maps, redirecciones abiertas) y genera un informe con recomendaciones concretas.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-item__q" data-text="faq.q2">¿El escaneo es legal y seguro para mi web?</summary>
+            <p class="faq-item__a" data-text="faq.a2">Sí. Securitia solo realiza peticiones HTTP de lectura, iguales a las de un navegador. No explota vulnerabilidades ni envía cargas maliciosas, por lo que no afecta al funcionamiento del sitio analizado.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-item__q" data-text="faq.q3">¿Cuánto tarda un escaneo?</summary>
+            <p class="faq-item__a" data-text="faq.a3">Normalmente entre 5 y 20 segundos, dependiendo de la velocidad de respuesta del sitio analizado.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-item__q" data-text="faq.q4">¿Qué incluye el informe Premium?</summary>
+            <p class="faq-item__a" data-text="faq.a4">El informe Premium desbloquea las 15+ verificaciones completas con descripción detallada, nivel de riesgo y recomendación de corrección para cada hallazgo, además del informe descargable.</p>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-item__q" data-text="faq.q5">¿Guardáis los datos de mi web?</summary>
+            <p class="faq-item__a" data-text="faq.a5">Guardamos el resultado del escaneo para poder enviarte el informe y mejorar el servicio. No almacenamos contraseñas ni datos privados de tus usuarios; solo información pública devuelta por tu servidor.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
       <div class="footer__container">
@@ -513,6 +575,7 @@
           </p>
         </div>
         <div class="footer__links">
+          <a href="/blog" class="footer__link" data-text="footer.link.blog">Blog</a>
           <a
             href="/privacy.html"
             class="footer__link"
