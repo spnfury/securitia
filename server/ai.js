@@ -151,7 +151,7 @@ async function callGroq(prompt, model) {
   for (const m of chain) {
     try {
       const text = await callGroqOnce(prompt, m);
-      if (text) return text;
+      if (text) return { text, model: m };
       lastErr = new Error(`Groq ${m}: respuesta vacía`);
     } catch (err) {
       lastErr = err;
@@ -231,7 +231,11 @@ export async function generateArticle({ topic, lang = "es", keywords = "", audie
 
   let text;
   if (provider.name === "anthropic") text = await callAnthropic(prompt, provider.model);
-  else if (provider.name === "groq") text = await callGroq(prompt, provider.model);
+  else if (provider.name === "groq") {
+    const r = await callGroq(prompt, provider.model);
+    text = r.text;
+    provider.model = r.model;
+  }
   else if (provider.name === "openai") text = await callOpenAI(prompt, provider.model);
   else throw new Error("No hay proveedor de IA configurado (define GROQ_API_KEY, ANTHROPIC_API_KEY u OPENAI_API_KEY)");
 
