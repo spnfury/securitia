@@ -321,6 +321,7 @@
 
     const scoreColors = { A: '#22c55e', B: '#84cc16', C: '#f59e0b', D: '#f97316', F: '#ef4444' };
     const severityIcons = { critical: '🔴', warning: '🟡', passed: '🟢' };
+    const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
     async function loadReport() {
       if (!token) {
@@ -398,11 +399,11 @@
           <div style="background: var(--bg-card); border-left: 4px solid ${borderColor}; border-radius: 12px; padding: 20px; margin-bottom: 12px;">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
               <span>${icon}</span>
-              <strong style="color: #fff; font-size: 0.95rem;">${r.name}</strong>
-              <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-muted); padding: 2px 10px; background: rgba(255,255,255,0.05); border-radius: 999px;">${r.category}</span>
+              <strong style="color: #fff; font-size: 0.95rem;">${escapeHtml(r.name)}</strong>
+              <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-muted); padding: 2px 10px; background: rgba(255,255,255,0.05); border-radius: 999px;">${escapeHtml(r.category)}</span>
             </div>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">${r.description}</p>
-            ${r.recommendation ? `<div style="font-size: 0.8rem; color: #00f0ff; margin-top: 8px;">💡 ${r.recommendation}</div>` : ''}
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">${escapeHtml(r.description)}</p>
+            ${r.recommendation ? `<div style="font-size: 0.8rem; color: #00f0ff; margin-top: 8px;">💡 ${escapeHtml(r.recommendation)}</div>` : ''}
           </div>
         `;
       }).join('');

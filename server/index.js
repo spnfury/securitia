@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import { scanUrl } from "./scanner.js";
+import { scanUrl, InvalidTargetError } from "./scanner.js";
 import { sendReportEmail } from "./emailService.js";
 import {
   insertScan,
@@ -37,6 +37,17 @@ app.use(express.json());
 
 // Serve static files in production
 app.use(express.static(join(__dirname, "..", "dist")));
+
+function lockPremium(r) {
+  return r.free
+    ? r
+    : {
+        ...r,
+        description: "[PREMIUM] Desbloquea para ver",
+        details: undefined,
+        recommendation: null,
+      };
+}
 
 // ─── API Routes ───
 
@@ -72,11 +83,16 @@ app.post("/api/scan", async (req, res) => {
       `✅ Scan complete: ${result.score} (${result.criticalCount} critical, ${result.warningCount} warnings)`,
     );
 
+    // Premium findings stay server-side until the report is unlocked.
     res.json({
       scanId,
       ...result,
+      results: result.results.map(lockPremium),
     });
   } catch (err) {
+    if (err instanceof InvalidTargetError) {
+      return res.status(400).json({ error: err.message });
+    }
     console.error("Scan error:", err);
     res
       .status(500)
@@ -177,17 +193,7 @@ app.get("/api/report/:token", (req, res) => {
     warningCount: scan.warning_count,
     passedCount: scan.passed_count,
     results:
-      lead.paid === 1
-        ? results
-        : results.map((r) =>
-            r.free
-              ? r
-              : {
-                  ...r,
-                  description: "[PREMIUM] Desbloquea para ver",
-                  recommendation: null,
-                },
-          ),
+      lead.paid === 1 ? results : results.map(lockPremium),
   });
 });
 
@@ -326,7 +332,10 @@ app.get("/{*splat}", (req, res) => {
   res.sendFile(join(__dirname, "..", "dist", "index.html"));
 });
 
-app.listen(PORT, () => {
+export default app;
+
+// On Vercel the app is invoked as a serverless function (see api/index.js).
+if (!process.env.VERCEL) app.listen(PORT, () => {
   console.log(`
   ╔══════════════════════════════════════╗
   ║   🛡️  SECURITIA Server Running      ║

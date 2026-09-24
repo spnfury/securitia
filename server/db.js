@@ -5,7 +5,12 @@ import { dirname, join } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const dbPath = join(__dirname, "..", "securitia.db");
+// Vercel's filesystem is read-only except /tmp (which is ephemeral per instance).
+const dbPath =
+  process.env.DATABASE_PATH ||
+  (process.env.VERCEL
+    ? "/tmp/securitia.db"
+    : join(__dirname, "..", "securitia.db"));
 const db = new Database(dbPath);
 
 // Enable WAL mode for better performance
